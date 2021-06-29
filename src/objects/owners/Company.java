@@ -1,6 +1,12 @@
 package objects.owners;
 
-public class Company {
+import objects.VehicleOwner;
+
+public class Company extends VehicleOwner {
     String title;
     double taxDeduction;
+
+    public Company(){
+
+    }
 }

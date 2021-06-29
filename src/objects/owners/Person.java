@@ -1,11 +1,13 @@
 package objects.owners;
 
-public class Person {
+import objects.VehicleOwner;
+
+public class Person extends VehicleOwner {
     String firstName,lastName;
     int age;
 
-    public Person (){
-
+    public Person (String firstName){
+        this.firstName = firstName;
     }
 
     public void canOwnVehicle(){

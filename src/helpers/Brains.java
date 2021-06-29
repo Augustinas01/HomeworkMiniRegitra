@@ -1,6 +1,7 @@
 package helpers;
 
-import view.MainPanel;
+
+import objects.VehicleOwner;
 import view.MainWindow;
 
 import javax.swing.*;
@@ -9,45 +10,53 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Objects;
 
 public class Brains implements MainWindow.MainWindowListener {
 
-    MainWindow view;
+    private final MainWindow view;
 
-    private String type;
+    private String vehicleType,userType;
+
+    private VehicleOwner user;
 
 
     public Brains(MainWindow view){
         this.view = view;
 
-        //Setting listeners
-        view.setRegisterButtonListener(e -> registerButton());
-        view.setSearchButtonListener(e -> searchButton());
+        //Set listeners
+        view.setRegisterButtonListener(e -> goRegisterButton());
+        view.setSearchButtonListener(e -> goSearchButton());
         view.setGoBackButtonListener(e -> goBackButton());
         view.setVehicleTypeRadioListener(e -> vehicleTypeRadio(e));
         view.setVehicleMakerListListener(e -> vehicleMakerList(e));
+        view.setVehicleRegisterButtonListener(e -> vehicleRegisterButton());
+        view.setLoginButtonListener(e -> loginButton());
+        view.setSignUpButtonListener(e -> signUpButton());
+        view.setProfileSelectorListener(e -> profileSelectorRadio(e));
 
         view.init();
-        this.type = "car";
+        this.vehicleType = "car";
+        this.userType = "person";
         view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
         view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
 
-        view.showMainPanel();
+        view.showLoginPanel();
+
+//        view.showMainPanel();
     }
 
     //region Listeners
     @Override
-    public void registerButton() {
+    public void goRegisterButton() {
         System.out.println("Register button pressed");
         view.showRegisterPanel();
 
     }
 
     @Override
-    public void searchButton() {
+    public void goSearchButton() {
         System.out.println("Search button pressed");
         view.showSearchPanel();
 
@@ -61,25 +70,25 @@ public class Brains implements MainWindow.MainWindowListener {
 
     @Override
     public void vehicleTypeRadio(ActionEvent e) {
-        System.out.println(e.getActionCommand());
+        System.out.println("Selected: " + e.getActionCommand());
         switch (e.getActionCommand()){
             case "Car" ->  {
-                this.type = "car";
+                this.vehicleType = "car";
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
                 view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
             }
             case "Motorcycle" -> {
-                this.type = "motorcycle";
+                this.vehicleType = "motorcycle";
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
                 view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
             }
             case "Truck" -> {
-                this.type = "truck";
+                this.vehicleType = "truck";
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
                 view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("MAN")));
             }
             case "Supercar" -> {
-                this.type = "supercar";
+                this.vehicleType = "supercar";
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
                 view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Ferrari")));
             }
@@ -106,11 +115,65 @@ public class Brains implements MainWindow.MainWindowListener {
             case "Volvo" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Volvo")));
         }
     }
+
+    @Override
+    public void vehicleRegisterButton() {
+        System.out.println("Vehicle registration button pressed");
+        registerVehicle();
+    }
+
+    @Override
+    public void loginButton() {
+        System.out.println("Login button pressed");
+        switch (this.userType){
+            case "person" -> {
+                if(authorize(view.getLoginFirstNameJTF().getText())){
+                    view.showMainPanel();
+                }
+            }
+            case "company" -> authorize(view.getCompanyIdJTF().getText());
+        }
+
+    }
+
+    @Override
+    public void signUpButton() {
+        System.out.println("Sign up button pressed");
+        registerUser();
+
+    }
+
+    @Override
+    public void profileSelectorRadio(ActionEvent e) {
+        System.out.println("Selected: " + e.getActionCommand());
+        switch (e.getActionCommand()){
+            case "Person" -> {
+                this.userType = "person";
+                if(view.getLoginCompanyLoginJP().isVisible()){
+                    view.getLoginCompanyLoginJP().setVisible(false);
+                    view.getLoginTextFieldsJP().remove(view.getLoginCompanyLoginJP());
+                }
+                view.getLoginTextFieldsJP().add(view.getLoginPersonLoginJP());
+                view.getLoginPersonLoginJP().setVisible(true);
+            }
+            case "Company" -> {
+                this.userType = "company";
+                if(view.getLoginPersonLoginJP().isVisible()){
+                    view.getLoginPersonLoginJP().setVisible(false);
+                    view.getLoginTextFieldsJP().remove(view.getLoginPersonLoginJP());
+                }
+                view.getLoginTextFieldsJP().add(view.getLoginCompanyLoginJP());
+                view.getLoginCompanyLoginJP().setVisible(true);
+            }
+
+        }
+
+    }
     //endregion
 
 
     private String[] getManufactorsList(){
-        File file = new File("src/data/" + this.type);
+        File file = new File("src/data/vehicleDB/" + this.vehicleType);
         return file.list();
     }
 //    private String[] getModelsList(String type){
@@ -121,9 +184,7 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private  String[] getModelsList(String manufactor) {
         String[] list = null;
-
-
-        try (BufferedReader br = new BufferedReader(new FileReader("src/data/" + this.type + "/" + manufactor))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/data/vehicleDB/" + this.vehicleType + "/" + manufactor))) {
             String line;
             while ((line = br.readLine()) != null) {
                 list = line.split(",");
@@ -133,6 +194,39 @@ public class Brains implements MainWindow.MainWindowListener {
         }
         return list;
 
+    }
+
+    private void registerVehicle(){
+        System.out.println("Type: " + this.vehicleType);
+        System.out.println("Make: " + view.getVehicleMakersJCB().getSelectedItem());
+        System.out.println("Model: " + view.getVehicleModelsJCB().getSelectedItem());
+        System.out.println("Registration year: " +
+                            view.getRegistrationYearJTF().getText() +
+                            " " +
+                            view.getRegistrationMonthJTF().getText() +
+                            " " +
+                            view.getRegistrationDayJTF().getText());
+        System.out.println("Horse power: " + view.getVehicleHorsePowerJTF().getText());
+        System.out.println("Price: " + view.getVehiclePriceJTF().getText());
+        System.out.println("Seats: " + view.getVehicleSeatCountJTF().getText());
+        System.out.println("Number plate: " + view.getNumberPlateJTF().getText());
+    }
+
+
+    private void registerUser(){
+        System.out.println("User type: " + this.userType);
+        System.out.println("First name: " + view.getLoginFirstNameJTF().getText());
+        System.out.println("Last name: " + view.getLoginLastNameJTF().getText());
+    }
+
+    private boolean authorize(String username){
+        File file = new File("src/data/users");
+        for(File user:file.listFiles()){
+            if(user.getName().equals(username)){
+                return true;
+            }
+        }
+        return false;
     }
 
 

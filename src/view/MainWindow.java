@@ -7,19 +7,25 @@ import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
 
-//    private JPanel main,search,register;
     private MainPanel main;
     private RegisterPanel register;
     private SearchPanel search;
-    ActionListener registerButtonListener, searchButtonListener, goBackButtonListener, vehicleTypeRadio, vehicleMakerListListener;
+    private LoginPanel login;
+    ActionListener registerButtonListener, searchButtonListener, goBackButtonListener, vehicleTypeRadio,
+            vehicleMakerListListener, vehicleRegisterButtonListener, loginButtonListener,signUpButtonListener,
+            profileSelectorListener;
 
 
     public interface MainWindowListener {
-        void registerButton();
-        void searchButton();
+        void goRegisterButton();
+        void goSearchButton();
         void goBackButton();
         void vehicleTypeRadio(ActionEvent e);
         void vehicleMakerList(ActionEvent e);
+        void vehicleRegisterButton();
+        void loginButton();
+        void signUpButton();
+        void profileSelectorRadio(ActionEvent e);
     }
 
 
@@ -54,6 +60,22 @@ public class MainWindow extends JFrame {
     public void setVehicleMakerListListener(ActionListener vehicleMakerListListener) {
         this.vehicleMakerListListener = vehicleMakerListListener;
     }
+
+    public void setVehicleRegisterButtonListener(ActionListener vehicleRegisterButtonListener) {
+        this.vehicleRegisterButtonListener = vehicleRegisterButtonListener;
+    }
+
+    public void setLoginButtonListener(ActionListener loginButtonListener) {
+        this.loginButtonListener = loginButtonListener;
+    }
+
+    public void setSignUpButtonListener(ActionListener signUpButtonListener) {
+        this.signUpButtonListener = signUpButtonListener;
+    }
+
+    public void setProfileSelectorListener(ActionListener profileSelectorListener) {
+        this.profileSelectorListener = profileSelectorListener;
+    }
     //endregion
 
     //region Getters
@@ -64,6 +86,45 @@ public class MainWindow extends JFrame {
     public JComboBox<String> getVehicleModelsJCB(){
         return this.register.getVehicleModelsList();
     }
+    public JTextField getRegistrationYearJTF(){
+        return this.register.getRegistrationYear();
+    }
+    public JTextField getRegistrationMonthJTF(){
+        return this.register.getRegistrationMonth();
+    }
+    public JTextField getRegistrationDayJTF(){
+        return this.register.getRegistrationDay();
+    }
+    public JTextField getVehicleHorsePowerJTF(){
+        return this.register.getVehicleHPTextField();
+    }
+    public JTextField getVehiclePriceJTF(){
+        return this.register.getVehiclePriceTF();
+    }
+    public JTextField getVehicleSeatCountJTF(){
+        return this.register.getVehicleSeatCountTF();
+    }
+    public JTextField getNumberPlateJTF(){
+        return this.register.getVehicleNumberPlateTF();
+    }
+    public JPanel getLoginTextFieldsJP(){
+        return this.login.getLoginJP();
+    }
+    public JPanel getLoginPersonLoginJP(){
+        return this.login.getPersonLoginJP();
+    }
+    public JPanel getLoginCompanyLoginJP(){
+        return this.login.getCompanyLoginJP();
+    }
+    public JTextField getLoginFirstNameJTF(){
+        return this.login.getFirstName();
+    }
+    public JTextField getLoginLastNameJTF(){
+        return this.login.getFirstName();
+    }
+    public JTextField getCompanyIdJTF(){
+        return this.login.getCompanyID();
+    }
 
 
     //endregion
@@ -71,11 +132,34 @@ public class MainWindow extends JFrame {
     public void init(){
         this.main = new MainPanel(this.registerButtonListener,this.searchButtonListener);
         this.search = new SearchPanel(this.goBackButtonListener,this.registerButtonListener);
-        this.register = new RegisterPanel( this.goBackButtonListener,
-                                            this.searchButtonListener,
-                                            this.vehicleTypeRadio,
-                                            this.vehicleMakerListListener);
+        this.register = new RegisterPanel(this.goBackButtonListener,
+                                          this.searchButtonListener,
+                                          this.vehicleTypeRadio,
+                                          this.vehicleMakerListListener,
+                                          this.vehicleRegisterButtonListener);
+        this.login = new LoginPanel(this.loginButtonListener,
+                                    this.signUpButtonListener,
+                                    this.profileSelectorListener);
         this.setVisible(true);
+
+    }
+
+
+    public void showLoginPanel(){
+        if (this.register.isVisible()) {
+            this.register.setVisible(false);
+            this.remove(this.register);
+        }
+        if (this.search.isVisible()) {
+            this.search.setVisible(false);
+            this.remove(this.search);
+        }
+        if(this.main.isVisible()) {
+            this.main.setVisible(false);
+            this.remove(this.main);
+        }
+        this.add(BorderLayout.CENTER, login);
+        this.login.setVisible(true);
 
     }
 
@@ -89,6 +173,10 @@ public class MainWindow extends JFrame {
         if (this.search.isVisible()) {
             this.search.setVisible(false);
             this.remove(this.search);
+        }
+        if(this.login.isVisible()) {
+            this.login.setVisible(false);
+            this.remove(this.login);
         }
         this.add(BorderLayout.CENTER, main);
         this.main.setVisible(true);

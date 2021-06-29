@@ -7,18 +7,20 @@ import java.awt.event.ActionListener;
 public class RegisterPanel extends JPanel {
 
     public JComboBox<String> vehicleMakersList,vehicleModelsList;
+    private JTextField registrationYear,registrationMonth,registrationDay,vehicleHPTextField,vehiclePriceTF,vehicleSeatCountTF,vehicleNumberPlateTF;
 
 
 
     public RegisterPanel(ActionListener goBackButtonListener,
                          ActionListener goSearchButtonListener,
                          ActionListener vehicleTypeRadio,
-                         ActionListener vehicleMakersListListener){
+                         ActionListener vehicleMakersListListener,
+                         ActionListener vehicleRegisterButtonListener){
         this.setLayout(new BorderLayout());
 
         this.add(BorderLayout.NORTH,header(goBackButtonListener,goSearchButtonListener));
         this.add(BorderLayout.CENTER,body(vehicleTypeRadio,vehicleMakersListListener));
-        this.add(BorderLayout.SOUTH,footer());
+        this.add(BorderLayout.SOUTH,footer(vehicleRegisterButtonListener));
     }
 
     //region Setters
@@ -36,6 +38,34 @@ public class RegisterPanel extends JPanel {
 
     public JComboBox<String> getVehicleModelsList() {
         return vehicleModelsList;
+    }
+
+    public JTextField getRegistrationYear() {
+        return registrationYear;
+    }
+
+    public JTextField getRegistrationMonth() {
+        return registrationMonth;
+    }
+
+    public JTextField getRegistrationDay() {
+        return registrationDay;
+    }
+
+    public JTextField getVehicleHPTextField() {
+        return vehicleHPTextField;
+    }
+
+    public JTextField getVehiclePriceTF() {
+        return vehiclePriceTF;
+    }
+
+    public JTextField getVehicleSeatCountTF() {
+        return vehicleSeatCountTF;
+    }
+
+    public JTextField getVehicleNumberPlateTF() {
+        return vehicleNumberPlateTF;
     }
     //endregion
 
@@ -119,17 +149,17 @@ public class RegisterPanel extends JPanel {
         //endregion
         //region Vehicle registration year text fields
         JPanel vehicleRegistrationFields = new JPanel();
-        JTextField registrationYear = new JTextField("Year");
-        JTextField registrationMonth = new JTextField("Month");
-        JTextField registrationDay = new JTextField("Day");
+        this.registrationYear = new JTextField("Year");
+        this.registrationMonth = new JTextField("Month");
+        this.registrationDay = new JTextField("Day");
         vehicleRegistrationFields.add(registrationYear);
         vehicleRegistrationFields.add(registrationMonth);
         vehicleRegistrationFields.add(registrationDay);
         //endregion
-        JTextField vehicleHPTextField = new JTextField("Horse Power");
-        JTextField vehiclePriceTF = new JTextField("Price");
-        JTextField vehicleSeatCountTF = new JTextField("Price");
-        JTextField vehicleNumberPlateTF = new JTextField("Number plate");
+        this.vehicleHPTextField = new JTextField("Horse Power");
+        this.vehiclePriceTF = new JTextField("Price");
+        this.vehicleSeatCountTF = new JTextField("Seat count");
+        this.vehicleNumberPlateTF = new JTextField("Number plate");
         //endregion
 
         //Content settings
@@ -162,17 +192,16 @@ public class RegisterPanel extends JPanel {
 
         return body;
     }
-
-
     //endregion
 
-    //region footer
+    //region Footer
 
-    private JPanel footer(){
+    private JPanel footer(ActionListener vehicleRegistrationButtonListener){
         JPanel footer = new JPanel();
 
         //Content
         JButton registerButton = new JButton("Register");
+        registerButton.addActionListener(vehicleRegistrationButtonListener);
 
         //Adding Content
         footer.add(registerButton);
