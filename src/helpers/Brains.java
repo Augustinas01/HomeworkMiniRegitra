@@ -11,10 +11,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Brains implements MainWindow.MainWindowListener {
 
     MainWindow view;
+
+    private String type;
 
 
     public Brains(MainWindow view){
@@ -25,10 +28,12 @@ public class Brains implements MainWindow.MainWindowListener {
         view.setSearchButtonListener(e -> searchButton());
         view.setGoBackButtonListener(e -> goBackButton());
         view.setVehicleTypeRadioListener(e -> vehicleTypeRadio(e));
+        view.setVehicleMakerListListener(e -> vehicleMakerList(e));
 
         view.init();
-        view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList("Car")));
-        view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("car", "BMW")));
+        this.type = "car";
+        view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
+        view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
 
         view.showMainPanel();
     }
@@ -59,29 +64,53 @@ public class Brains implements MainWindow.MainWindowListener {
         System.out.println(e.getActionCommand());
         switch (e.getActionCommand()){
             case "Car" ->  {
-                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList("car")));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("car","BMW")));
+                this.type = "car";
+                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
             }
             case "Motorcycle" -> {
-                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList("motorcycle")));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("motorcycle","BMW")));
+                this.type = "motorcycle";
+                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
             }
             case "Truck" -> {
-                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList("truck")));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("truck","MAN")));
+                this.type = "truck";
+                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("MAN")));
             }
             case "Supercar" -> {
-                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList("supercar")));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("supercar","Ferrari")));
+                this.type = "supercar";
+                view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Ferrari")));
             }
         }
 
     }
+
+    @Override
+    public void vehicleMakerList(ActionEvent e) {
+        switch (Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString()){
+            case "BMW" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
+            case "Mercedes-Benz" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Mercedes-Benz")));
+            case "Porsche" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Porsche")));
+            case "Volkswagen" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Volkswagen")));
+            case "MV_Agusta" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("MV_Agusta")));
+            case "Suzuki" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Suzuki")));
+            case "Yamaha" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Yamaha")));
+            case "Ferrari" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Ferrari")));
+            case "Koenigsegg" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Koenigsegg")));
+            case "Lamborghini" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Lamborghini")));
+            case "McLaren" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("McLaren")));
+            case "MAN" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( "MAN")));
+            case "Scania" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( "Scania")));
+            case "Volvo" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Volvo")));
+        }
+    }
     //endregion
 
 
-    private String[] getManufactorsList(String type){
-        File file = new File("src/data/" + type);
+    private String[] getManufactorsList(){
+        File file = new File("src/data/" + this.type);
         return file.list();
     }
 //    private String[] getModelsList(String type){
@@ -90,11 +119,11 @@ public class Brains implements MainWindow.MainWindowListener {
 //    }
 
 
-    private static String[] getModelsList(String type, String manufactor) {
+    private  String[] getModelsList(String manufactor) {
         String[] list = null;
 
 
-        try (BufferedReader br = new BufferedReader(new FileReader("src/data/" + type + "/" + manufactor))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/data/" + this.type + "/" + manufactor))) {
             String line;
             while ((line = br.readLine()) != null) {
                 list = line.split(",");

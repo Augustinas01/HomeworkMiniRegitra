@@ -10,11 +10,14 @@ public class RegisterPanel extends JPanel {
 
 
 
-    public RegisterPanel(ActionListener goBackButtonListener, ActionListener goSearchButtonListener,ActionListener vehicleTypeRadio){
+    public RegisterPanel(ActionListener goBackButtonListener,
+                         ActionListener goSearchButtonListener,
+                         ActionListener vehicleTypeRadio,
+                         ActionListener vehicleMakersListListener){
         this.setLayout(new BorderLayout());
 
         this.add(BorderLayout.NORTH,header(goBackButtonListener,goSearchButtonListener));
-        this.add(BorderLayout.CENTER,body(vehicleTypeRadio));
+        this.add(BorderLayout.CENTER,body(vehicleTypeRadio,vehicleMakersListListener));
         this.add(BorderLayout.SOUTH,footer());
     }
 
@@ -64,7 +67,7 @@ public class RegisterPanel extends JPanel {
     //endregion
 
     //region Body
-    private JPanel body(ActionListener vehicleTypeRadioListener){
+    private JPanel body(ActionListener vehicleTypeRadioListener,ActionListener vehicleMakersListListener){
         JPanel body = new JPanel();
         body.setLayout(new GridLayout(0,2));
 
@@ -110,6 +113,9 @@ public class RegisterPanel extends JPanel {
         //region Combobox
         vehicleMakersList = new JComboBox<>();
         vehicleModelsList = new JComboBox<>();
+
+        vehicleMakersList.addActionListener(vehicleMakersListListener);
+
         //endregion
         //region Vehicle registration year text fields
         JPanel vehicleRegistrationFields = new JPanel();

@@ -11,7 +11,7 @@ public class MainWindow extends JFrame {
     private MainPanel main;
     private RegisterPanel register;
     private SearchPanel search;
-    ActionListener registerButtonListener, searchButtonListener, goBackButtonListener, vehicleTypeRadio;
+    ActionListener registerButtonListener, searchButtonListener, goBackButtonListener, vehicleTypeRadio, vehicleMakerListListener;
 
 
     public interface MainWindowListener {
@@ -19,6 +19,7 @@ public class MainWindow extends JFrame {
         void searchButton();
         void goBackButton();
         void vehicleTypeRadio(ActionEvent e);
+        void vehicleMakerList(ActionEvent e);
     }
 
 
@@ -49,6 +50,10 @@ public class MainWindow extends JFrame {
     public void setVehicleTypeRadioListener(ActionListener vehicleTypeRadio) {
         this.vehicleTypeRadio = vehicleTypeRadio;
     }
+
+    public void setVehicleMakerListListener(ActionListener vehicleMakerListListener) {
+        this.vehicleMakerListListener = vehicleMakerListListener;
+    }
     //endregion
 
     //region Getters
@@ -66,7 +71,10 @@ public class MainWindow extends JFrame {
     public void init(){
         this.main = new MainPanel(this.registerButtonListener,this.searchButtonListener);
         this.search = new SearchPanel(this.goBackButtonListener,this.registerButtonListener);
-        this.register = new RegisterPanel(this.goBackButtonListener,this.searchButtonListener,this.vehicleTypeRadio);
+        this.register = new RegisterPanel( this.goBackButtonListener,
+                                            this.searchButtonListener,
+                                            this.vehicleTypeRadio,
+                                            this.vehicleMakerListListener);
         this.setVisible(true);
 
     }
