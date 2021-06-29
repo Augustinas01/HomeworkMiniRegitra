@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
@@ -10,13 +11,14 @@ public class MainWindow extends JFrame {
     private MainPanel main;
     private RegisterPanel register;
     private SearchPanel search;
-    ActionListener registerButtonListener, searchButtonListener, goBackButtonListener;
+    ActionListener registerButtonListener, searchButtonListener, goBackButtonListener, vehicleTypeRadio;
 
 
     public interface MainWindowListener {
         void registerButton();
         void searchButton();
         void goBackButton();
+        void vehicleTypeRadio(ActionEvent e);
     }
 
 
@@ -43,17 +45,28 @@ public class MainWindow extends JFrame {
     public void setGoBackButtonListener(ActionListener goBackButtonListener) {
         this.goBackButtonListener = goBackButtonListener;
     }
+
+    public void setVehicleTypeRadioListener(ActionListener vehicleTypeRadio) {
+        this.vehicleTypeRadio = vehicleTypeRadio;
+    }
     //endregion
 
     //region Getters
 
+    public JComboBox<String> getVehicleMakersJCB(){
+        return this.register.getVehicleMakersList();
+    }
+    public JComboBox<String> getVehicleModelsJCB(){
+        return this.register.getVehicleModelsList();
+    }
+
 
     //endregion
 
-    public void init(String[] makersList){
+    public void init(){
         this.main = new MainPanel(this.registerButtonListener,this.searchButtonListener);
         this.search = new SearchPanel(this.goBackButtonListener,this.registerButtonListener);
-        this.register = new RegisterPanel(this.goBackButtonListener,this.searchButtonListener, makersList);
+        this.register = new RegisterPanel(this.goBackButtonListener,this.searchButtonListener,this.vehicleTypeRadio);
         this.setVisible(true);
 
     }

@@ -6,16 +6,15 @@ import java.awt.event.ActionListener;
 
 public class RegisterPanel extends JPanel {
 
-    private final String[] makersList;
+    public JComboBox<String> vehicleMakersList,vehicleModelsList;
 
 
 
-    public RegisterPanel(ActionListener goBackButtonListener, ActionListener goSearchButtonListener, String[] makersList){
+    public RegisterPanel(ActionListener goBackButtonListener, ActionListener goSearchButtonListener,ActionListener vehicleTypeRadio){
         this.setLayout(new BorderLayout());
-        this.makersList = makersList;
 
         this.add(BorderLayout.NORTH,header(goBackButtonListener,goSearchButtonListener));
-        this.add(BorderLayout.CENTER,body());
+        this.add(BorderLayout.CENTER,body(vehicleTypeRadio));
         this.add(BorderLayout.SOUTH,footer());
     }
 
@@ -24,6 +23,17 @@ public class RegisterPanel extends JPanel {
 
 
 
+    //endregion
+
+    //region Getters
+
+    public JComboBox<String> getVehicleMakersList() {
+        return vehicleMakersList;
+    }
+
+    public JComboBox<String> getVehicleModelsList() {
+        return vehicleModelsList;
+    }
     //endregion
 
     //region Header
@@ -54,7 +64,7 @@ public class RegisterPanel extends JPanel {
     //endregion
 
     //region Body
-    private JPanel body(){
+    private JPanel body(ActionListener vehicleTypeRadioListener){
         JPanel body = new JPanel();
         body.setLayout(new GridLayout(0,2));
 
@@ -73,12 +83,22 @@ public class RegisterPanel extends JPanel {
         JRadioButton radioCar = new JRadioButton("Car");
         JRadioButton radioMotorcycle = new JRadioButton("Motorcycle");
         JRadioButton radioTruck = new JRadioButton("Truck");
-        JRadioButton radioSuperCar = new JRadioButton("SuperCar");
+        JRadioButton radioSuperCar = new JRadioButton("Supercar");
+
+
+        radioCar.addActionListener(vehicleTypeRadioListener);
+        radioMotorcycle.addActionListener(vehicleTypeRadioListener);
+        radioTruck.addActionListener(vehicleTypeRadioListener);
+        radioSuperCar.addActionListener(vehicleTypeRadioListener);
+
         ButtonGroup bg = new ButtonGroup();
         bg.add(radioCar);
         bg.add(radioMotorcycle);
         bg.add(radioTruck);
         bg.add(radioSuperCar);
+
+        radioCar.setSelected(true);
+
 
         //Adding buttons to panel
         JPanel radioButtons = new JPanel();
@@ -88,8 +108,8 @@ public class RegisterPanel extends JPanel {
         radioButtons.add(radioSuperCar);
         //endregion
         //region Combobox
-        JComboBox vehicleMakersList = new JComboBox(this.makersList);
-        JComboBox vehicleModelsList = new JComboBox(this.makersList);
+        vehicleMakersList = new JComboBox<>();
+        vehicleModelsList = new JComboBox<>();
         //endregion
         //region Vehicle registration year text fields
         JPanel vehicleRegistrationFields = new JPanel();
@@ -103,7 +123,7 @@ public class RegisterPanel extends JPanel {
         JTextField vehicleHPTextField = new JTextField("Horse Power");
         JTextField vehiclePriceTF = new JTextField("Price");
         JTextField vehicleSeatCountTF = new JTextField("Price");
-        JTextField vehicleNumberPlateTF = new JTextField("Number Plate");
+        JTextField vehicleNumberPlateTF = new JTextField("Number plate");
         //endregion
 
         //Content settings

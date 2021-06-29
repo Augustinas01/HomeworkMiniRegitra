@@ -11,25 +11,10 @@ import java.util.ArrayList;
 public class App {
     public static void main(String[] args) {
         MainWindow view = new MainWindow("MiniRegitra");
-        Brains controller = new Brains(view, getManufactorsList());
+        Brains controller = new Brains(view);
 
     }
 
-    public static ArrayList<String> getManufactorsList() {
-        ArrayList<String> list = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader("src/data/CarManufactors"))) {
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                list.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return list;
-
-    }
 
 
 
