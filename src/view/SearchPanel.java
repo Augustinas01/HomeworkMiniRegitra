@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 
 public class SearchPanel extends JPanel {
 
-    public SearchPanel(ActionListener goBackButtonListener, ActionListener registerButtonListener){
+    public SearchPanel(ActionListener goBackButtonListener, ActionListener goRegisterButtonListener){
         this.setLayout(new BorderLayout());
 
-        this.add(BorderLayout.NORTH,header(goBackButtonListener,registerButtonListener));
+        this.add(BorderLayout.NORTH,header(goBackButtonListener,goRegisterButtonListener));
 
     }
 
@@ -20,21 +20,21 @@ public class SearchPanel extends JPanel {
 
         //Content
         JLabel title = new JLabel("Vehicle search");
-        JButton search = new JButton("Register");
+        JButton goSearch = new JButton("Register");
         JButton goBack = new JButton("Main menu");
 
         //Content Settings
         goBack.setHorizontalAlignment(SwingConstants.LEFT);
-        search.setHorizontalAlignment(SwingConstants.RIGHT);
+        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         goBack.addActionListener(goBackButtonListener);
-        search.addActionListener(registerButtonListener);
+        goSearch.addActionListener(registerButtonListener);
 
         //Addding Content
         header.add(goBack);
         header.add(title);
-        header.add(search);
+        header.add(goSearch);
 
         return header;
     }

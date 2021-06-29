@@ -10,12 +10,13 @@ public class RegisterPanel extends JPanel {
 
 
 
-    public RegisterPanel(ActionListener goBackButtonListener, ActionListener searchButtonListener, String[] makersList){
+    public RegisterPanel(ActionListener goBackButtonListener, ActionListener goSearchButtonListener, String[] makersList){
         this.setLayout(new BorderLayout());
         this.makersList = makersList;
 
-        this.add(BorderLayout.NORTH,header(goBackButtonListener,searchButtonListener));
+        this.add(BorderLayout.NORTH,header(goBackButtonListener,goSearchButtonListener));
         this.add(BorderLayout.CENTER,body());
+        this.add(BorderLayout.SOUTH,footer());
     }
 
     //region Setters
@@ -32,21 +33,21 @@ public class RegisterPanel extends JPanel {
 
         //Content
         JLabel title = new JLabel("Vehicle registration");
-        JButton search = new JButton("Search");
+        JButton goSearch = new JButton("Search");
         JButton goBack = new JButton("Main menu");
 
         //Content Settings
         goBack.setHorizontalAlignment(SwingConstants.LEFT);
-        search.setHorizontalAlignment(SwingConstants.RIGHT);
+        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         goBack.addActionListener(goBackButtonListener);
-        search.addActionListener(searchButtonListener);
+        goSearch.addActionListener(searchButtonListener);
 
         //Addding Content
         header.add(goBack);
         header.add(title);
-        header.add(search);
+        header.add(goSearch);
 
         return header;
     }
@@ -135,6 +136,24 @@ public class RegisterPanel extends JPanel {
 
         return body;
     }
+
+
+    //endregion
+
+    //region footer
+
+    private JPanel footer(){
+        JPanel footer = new JPanel();
+
+        //Content
+        JButton registerButton = new JButton("Register");
+
+        //Adding Content
+        footer.add(registerButton);
+
+        return footer;
+    }
+
 
 
     //endregion
