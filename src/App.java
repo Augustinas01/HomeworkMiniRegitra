@@ -22,7 +22,6 @@ public class App {
             String line;
 
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
                 list.add(line);
             }
         } catch (IOException e) {

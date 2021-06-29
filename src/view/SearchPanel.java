@@ -21,7 +21,7 @@ public class SearchPanel extends JPanel {
         //Content
         JLabel title = new JLabel("Vehicle search");
         JButton search = new JButton("Register");
-        JButton goBack = new JButton("Go Back");
+        JButton goBack = new JButton("Main menu");
 
         //Content Settings
         goBack.setHorizontalAlignment(SwingConstants.LEFT);

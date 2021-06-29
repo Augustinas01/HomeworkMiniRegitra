@@ -33,7 +33,7 @@ public class RegisterPanel extends JPanel {
         //Content
         JLabel title = new JLabel("Vehicle registration");
         JButton search = new JButton("Search");
-        JButton goBack = new JButton("Go Back");
+        JButton goBack = new JButton("Main menu");
 
         //Content Settings
         goBack.setHorizontalAlignment(SwingConstants.LEFT);
@@ -55,7 +55,9 @@ public class RegisterPanel extends JPanel {
     //region Body
     private JPanel body(){
         JPanel body = new JPanel();
-        //Content
+        body.setLayout(new GridLayout(0,2));
+
+        //region Content
         //region Labels
         JLabel vehicleType = new JLabel("Select vehicle type");
         JLabel vehicleMaker = new JLabel("Make");
@@ -76,28 +78,60 @@ public class RegisterPanel extends JPanel {
         bg.add(radioMotorcycle);
         bg.add(radioTruck);
         bg.add(radioSuperCar);
+
+        //Adding buttons to panel
+        JPanel radioButtons = new JPanel();
+        radioButtons.add(radioCar);
+        radioButtons.add(radioMotorcycle);
+        radioButtons.add(radioTruck);
+        radioButtons.add(radioSuperCar);
         //endregion
-        //region Make Combobox
+        //region Combobox
         JComboBox vehicleMakersList = new JComboBox(this.makersList);
+        JComboBox vehicleModelsList = new JComboBox(this.makersList);
         //endregion
-
-
+        //region Vehicle registration year text fields
+        JPanel vehicleRegistrationFields = new JPanel();
+        JTextField registrationYear = new JTextField("Year");
+        JTextField registrationMonth = new JTextField("Month");
+        JTextField registrationDay = new JTextField("Day");
+        vehicleRegistrationFields.add(registrationYear);
+        vehicleRegistrationFields.add(registrationMonth);
+        vehicleRegistrationFields.add(registrationDay);
+        //endregion
+        JTextField vehicleHPTextField = new JTextField("Horse Power");
+        JTextField vehiclePriceTF = new JTextField("Price");
+        JTextField vehicleSeatCountTF = new JTextField("Price");
+        JTextField vehicleNumberPlateTF = new JTextField("Number Plate");
+        //endregion
 
         //Content settings
 
-
-        //Adding Content
-        //region Type selector
+        //region Adding Content
         body.add(vehicleType); // radio buttons title
-        body.add(radioCar);
-        body.add(radioMotorcycle);
-        body.add(radioTruck);
-        body.add(radioSuperCar);
-        //endregion
+        body.add(radioButtons);
+
         body.add(vehicleMaker);
         body.add(vehicleMakersList);
 
+        body.add(vehicleModel);
+        body.add(vehicleModelsList);
 
+        body.add(vehicleRegistrationDate);
+        body.add(vehicleRegistrationFields);
+
+        body.add(vehicleHP);
+        body.add(vehicleHPTextField);
+
+        body.add(vehiclePrice);
+        body.add(vehiclePriceTF);
+
+        body.add(vehicleSeatCount);
+        body.add(vehicleSeatCountTF);
+
+        body.add(vehicleNumberPlate);
+        body.add(vehicleNumberPlateTF);
+        //endregion
 
         return body;
     }

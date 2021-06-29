@@ -24,11 +24,7 @@ public class MainWindow extends JFrame {
         this.setTitle(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
-        //this.setResizable(true);
         this.setSize(800,600);
-//        ImageIcon icon = new ImageIcon("./src/main/java/coat_h60.png");
-//        this.setIconImage(icon.getImage());
-//        this.getContentPane().setLayout(new GridLayout());
         this.getContentPane().setBackground(Color.decode("#f4f4f4"));
 
 

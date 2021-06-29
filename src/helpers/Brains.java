@@ -13,9 +13,11 @@ public class Brains implements MainWindow.MainWindowListener {
     public Brains(MainWindow view, ArrayList<String> manufactorsList){
         this.view = view;
 
+        //Setting listeners
         view.setRegisterButtonListener(e -> registerButton());
         view.setSearchButtonListener(e -> searchButton());
         view.setGoBackButtonListener(e -> goBackButton());
+
         view.init( manufactorsList.toArray(new String[0]));
 
         view.showMainPanel();
