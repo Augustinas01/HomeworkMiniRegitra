@@ -4,9 +4,10 @@ import objects.VehicleOwner;
 
 public class Company extends VehicleOwner {
     String title;
+    int companyID;
     double taxDeduction;
 
-    public Company(){
-
+    public Company(int companyID){
+        this.companyID = companyID;
     }
 }

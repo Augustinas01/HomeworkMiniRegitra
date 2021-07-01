@@ -2,14 +2,13 @@ package helpers;
 
 
 import objects.VehicleOwner;
+import objects.owners.Company;
+import objects.owners.Person;
 import view.MainWindow;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 import java.util.Objects;
 
@@ -19,7 +18,8 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private String vehicleType,userType;
 
-    private VehicleOwner user;
+    private VehicleOwner loggedUser;
+
 
 
     public Brains(MainWindow view){
@@ -35,6 +35,7 @@ public class Brains implements MainWindow.MainWindowListener {
         view.setLoginButtonListener(e -> loginButton());
         view.setSignUpButtonListener(e -> signUpButton());
         view.setProfileSelectorListener(e -> profileSelectorRadio(e));
+        view.setLogOutButtonListener(e -> logOut());
 
         view.init();
         this.vehicleType = "car";
@@ -44,7 +45,6 @@ public class Brains implements MainWindow.MainWindowListener {
 
         view.showLoginPanel();
 
-//        view.showMainPanel();
     }
 
     //region Listeners
@@ -66,6 +66,12 @@ public class Brains implements MainWindow.MainWindowListener {
     public void goBackButton() {
         System.out.println("Go back button pressed");
         view.showMainPanel();
+    }
+
+    @Override
+    public void logOut() {
+        System.out.println("Log out button pressed");
+        view.showLoginPanel();
     }
 
     @Override
@@ -129,9 +135,24 @@ public class Brains implements MainWindow.MainWindowListener {
             case "person" -> {
                 if(authorize(view.getLoginFirstNameJTF().getText())){
                     view.showMainPanel();
+
+                    loggedUser = new Person(view.getLoginFirstNameJTF().getText());
+
+                    view.getLoginFirstNameJTF().setText("");
+                    view.getLoginLastNameJTF().setText("");
                 }
             }
-            case "company" -> authorize(view.getCompanyIdJTF().getText());
+            case "company" -> {
+                if(authorize(view.getCompanyIdJTF().getText())){
+                    view.showMainPanel();
+
+                    loggedUser = new Company(Integer.parseInt(view.getCompanyIdJTF().getText()));
+
+                    view.getLoginFirstNameJTF().setText("");
+                    view.getLoginLastNameJTF().setText("");
+
+                };
+            }
         }
 
     }
@@ -217,7 +238,38 @@ public class Brains implements MainWindow.MainWindowListener {
         System.out.println("User type: " + this.userType);
         System.out.println("First name: " + view.getLoginFirstNameJTF().getText());
         System.out.println("Last name: " + view.getLoginLastNameJTF().getText());
+
+        File usersDB = new File("src/data/users");
+        if (!usersDB.exists())
+        {
+            try
+            {
+                usersDB.mkdirs();
+                usersDB.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getLoginFirstNameJTF().getText(), true));
+            buf.append(view.getLoginLastNameJTF().getText() + "," +
+                    this.userType + "," +
+                    null);
+
+            buf.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
+
+
+    //region Authorization
 
     private boolean authorize(String username){
         File file = new File("src/data/users");
@@ -228,6 +280,16 @@ public class Brains implements MainWindow.MainWindowListener {
         }
         return false;
     }
+//    private boolean authorize(int companyID){
+//        File file = new File("src/data/users");
+//        for(File user:file.listFiles()){
+//            if(user.getName().equals(String.valueOf(companyID))){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+    //endregion
 
 
 }

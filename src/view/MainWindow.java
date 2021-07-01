@@ -7,19 +7,20 @@ import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
 
-    private MainPanel main;
+    private MainMenuPanel main;
     private RegisterPanel register;
     private SearchPanel search;
     private LoginPanel login;
     ActionListener registerButtonListener, searchButtonListener, goBackButtonListener, vehicleTypeRadio,
             vehicleMakerListListener, vehicleRegisterButtonListener, loginButtonListener,signUpButtonListener,
-            profileSelectorListener;
+            profileSelectorListener, logOutButtonListener;
 
 
     public interface MainWindowListener {
         void goRegisterButton();
         void goSearchButton();
         void goBackButton();
+        void logOut();
         void vehicleTypeRadio(ActionEvent e);
         void vehicleMakerList(ActionEvent e);
         void vehicleRegisterButton();
@@ -44,37 +45,32 @@ public class MainWindow extends JFrame {
     public void setRegisterButtonListener(ActionListener registerButtonListener) {
         this.registerButtonListener = registerButtonListener;
     }
-
     public void setSearchButtonListener(ActionListener searchButtonListener) {
         this.searchButtonListener = searchButtonListener;
     }
-
     public void setGoBackButtonListener(ActionListener goBackButtonListener) {
         this.goBackButtonListener = goBackButtonListener;
     }
-
     public void setVehicleTypeRadioListener(ActionListener vehicleTypeRadio) {
         this.vehicleTypeRadio = vehicleTypeRadio;
     }
-
     public void setVehicleMakerListListener(ActionListener vehicleMakerListListener) {
         this.vehicleMakerListListener = vehicleMakerListListener;
     }
-
     public void setVehicleRegisterButtonListener(ActionListener vehicleRegisterButtonListener) {
         this.vehicleRegisterButtonListener = vehicleRegisterButtonListener;
     }
-
     public void setLoginButtonListener(ActionListener loginButtonListener) {
         this.loginButtonListener = loginButtonListener;
     }
-
     public void setSignUpButtonListener(ActionListener signUpButtonListener) {
         this.signUpButtonListener = signUpButtonListener;
     }
-
     public void setProfileSelectorListener(ActionListener profileSelectorListener) {
         this.profileSelectorListener = profileSelectorListener;
+    }
+    public void setLogOutButtonListener(ActionListener logOutButtonListener) {
+        this.logOutButtonListener = logOutButtonListener;
     }
     //endregion
 
@@ -130,13 +126,18 @@ public class MainWindow extends JFrame {
     //endregion
 
     public void init(){
-        this.main = new MainPanel(this.registerButtonListener,this.searchButtonListener);
+        this.main = new MainMenuPanel(  this.registerButtonListener,
+                                        this.searchButtonListener,
+                                        this.logOutButtonListener);
+
         this.search = new SearchPanel(this.goBackButtonListener,this.registerButtonListener);
+
         this.register = new RegisterPanel(this.goBackButtonListener,
                                           this.searchButtonListener,
                                           this.vehicleTypeRadio,
                                           this.vehicleMakerListListener,
                                           this.vehicleRegisterButtonListener);
+
         this.login = new LoginPanel(this.loginButtonListener,
                                     this.signUpButtonListener,
                                     this.profileSelectorListener);

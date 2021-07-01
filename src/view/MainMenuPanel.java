@@ -4,14 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class MainPanel extends JPanel {
+public class MainMenuPanel extends JPanel {
 
 
 
 
 
-    public MainPanel(ActionListener registerButtonListener,ActionListener searchButtonListener){
-        this.setLayout(new FlowLayout(FlowLayout.CENTER,50,250));
+    public MainMenuPanel(ActionListener registerButtonListener, ActionListener searchButtonListener, ActionListener logOutButtonListener){
+        this.setLayout(new FlowLayout(FlowLayout.CENTER,1000,25));
         this.setOpaque(false);
 
         //Content
@@ -23,9 +23,14 @@ public class MainPanel extends JPanel {
         searchButton.setFocusable(false);
         searchButton.addActionListener(searchButtonListener);
 
+        JButton logOutButton = new JButton("Log out");
+        logOutButton.setFocusable(false);
+        logOutButton.addActionListener(logOutButtonListener);
+
         //Adding content
         this.add(registerButton);
         this.add(searchButton);
+        this.add(logOutButton);
     }
 
 

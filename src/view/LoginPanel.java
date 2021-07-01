@@ -9,6 +9,7 @@ public class LoginPanel extends JPanel {
     JPanel body, personLogin,companyLogin, loginJP;
 
 
+
     //region Getters
 
     public JTextField getFirstName() {
@@ -45,8 +46,6 @@ public class LoginPanel extends JPanel {
         this.loginJP = loginJP();
         this.add(BorderLayout.NORTH,new JLabel("Mini Regitra",SwingConstants.CENTER));
         this.add(BorderLayout.CENTER,body(loginButtonListener,signUpButtonListener,profileSelectorListener));
-
-
     }
 
     //region Body
