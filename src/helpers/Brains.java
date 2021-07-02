@@ -160,7 +160,12 @@ public class Brains implements MainWindow.MainWindowListener {
     @Override
     public void signUpButton() {
         System.out.println("Sign up button pressed");
-        registerUser();
+        if (this.userType.equals("person")){
+            registerUser();
+        }else{
+            registerCompany();
+        }
+
 
     }
 
@@ -219,25 +224,100 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private void registerVehicle(){
         System.out.println("Type: " + this.vehicleType);
-        System.out.println("Make: " + view.getVehicleMakersJCB().getSelectedItem());
-        System.out.println("Model: " + view.getVehicleModelsJCB().getSelectedItem());
-        System.out.println("Registration year: " +
-                            view.getRegistrationYearJTF().getText() +
-                            " " +
-                            view.getRegistrationMonthJTF().getText() +
-                            " " +
-                            view.getRegistrationDayJTF().getText());
-        System.out.println("Horse power: " + view.getVehicleHorsePowerJTF().getText());
-        System.out.println("Price: " + view.getVehiclePriceJTF().getText());
-        System.out.println("Seats: " + view.getVehicleSeatCountJTF().getText());
-        System.out.println("Number plate: " + view.getNumberPlateJTF().getText());
+        String vehicleMake = Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString();
+        String vehicleModel = Objects.requireNonNull(view.getVehicleModelsJCB().getSelectedItem()).toString();
+        String vehicleFirstRegistrationYear = String.format(
+                "%s-%s-%s",
+                view.getRegistrationYearJTF().getText(),
+                view.getRegistrationMonthJTF().getText(),
+                view.getRegistrationDayJTF().getText());
+        String vehicleHP = view.getVehicleHorsePowerJTF().getText();
+        String vehiclePrice = view.getVehiclePriceJTF().getText();
+        String vehicleSeatCount = view.getVehicleSeatCountJTF().getText();
+        String vehicleNumberPlate = view.getNumberPlateJTF().getText();
+
+        String vehicleInfo = String.format(
+                "type,%s%n" +
+                "horsepower,%s%n" +
+                "seatcount,%s%n" +
+                "brand,%s%n" +
+                "model,%s%n" +
+                "numberplate,%s%n" +
+                "firstregistrationdate,%s%n" +
+                "price,%s%n" +
+                "taxrate,%s%n" +
+                "owner,%s;%s%n",
+                this.vehicleType,
+                vehicleHP,
+                vehicleSeatCount,
+                vehicleMake,
+                vehicleModel,
+                vehicleNumberPlate,
+                vehicleFirstRegistrationYear,
+                vehiclePrice,
+                null,
+                loggedUser.getOwnerInfo()[0],
+                loggedUser.getOwnerInfo()[1]);
+
+
+        File vehiclesDB = new File("src/data/registeredVehicles");
+        int vehicleID = vehiclesDB.listFiles().length;
+
+        if (!vehiclesDB.exists())
+        {
+            try
+            {
+                vehiclesDB.mkdirs();
+                vehiclesDB.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB + "/" + vehicleID, true));
+
+            buf.append("id,").append(String.valueOf(vehicleID));
+            buf.newLine();
+            buf.append(vehicleInfo);
+
+            buf.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
     }
 
-
+    //region User Registration
+    //TODO optimization, writing can be one method
     private void registerUser(){
-        System.out.println("User type: " + this.userType);
-        System.out.println("First name: " + view.getLoginFirstNameJTF().getText());
-        System.out.println("Last name: " + view.getLoginLastNameJTF().getText());
+        String age = JOptionPane.showInputDialog(view,"What is your age?","Registration",JOptionPane.PLAIN_MESSAGE);
+
+        if (!(age == null)) {
+            String confirmationText = String.format("First name: %s %n" +
+                    "Last name: %s %n" +
+                    "Age: %s%n",view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age);
+            int confirmResult = JOptionPane.showConfirmDialog(view,
+                    "Is this correct?\n" + confirmationText,
+                    "Registration confirmation",
+                    JOptionPane.YES_NO_OPTION);
+            if(confirmResult == JOptionPane.NO_OPTION){
+                return;
+            }
+        } else {
+            return;
+        }
+
+        String userInfo = String.format("firstname,%s%n" +
+                "lastname,%s%n" +
+                "age,%s%n" +
+                "type,%s%n" +
+                "owns,%s%n",view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age,this.userType,null);
 
         File usersDB = new File("src/data/users");
         if (!usersDB.exists())
@@ -255,9 +335,8 @@ public class Brains implements MainWindow.MainWindowListener {
         try
         {
             BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getLoginFirstNameJTF().getText(), true));
-            buf.append(view.getLoginLastNameJTF().getText() + "," +
-                    this.userType + "," +
-                    null);
+
+            buf.append(userInfo);
 
             buf.close();
         }
@@ -265,8 +344,59 @@ public class Brains implements MainWindow.MainWindowListener {
         {
             e.printStackTrace();
         }
+        JOptionPane.showMessageDialog(view,"User created succesfully!");
 
     }
+
+    private void registerCompany(){
+        String title = JOptionPane.showInputDialog(view,"What is company title?","Registration",JOptionPane.PLAIN_MESSAGE);
+
+        if (!(title == null)) {
+            String confirmationText = String.format("Company title: %s %n" +
+                    "Company no: %s %n",title,view.getCompanyIdJTF().getText());
+            int confirmResult = JOptionPane.showConfirmDialog(view,
+                    "Is this correct?\n" + confirmationText,
+                    "Registration confirmation",
+                    JOptionPane.YES_NO_OPTION);
+            if(confirmResult == JOptionPane.NO_OPTION){
+                return;
+            }
+        } else {
+            return;
+        }
+        String companyInfo = String.format("title,%s%n" +
+                "no,%s%n" +
+                "owns,%s%n",title,view.getCompanyIdJTF().getText(),null);
+
+        File usersDB = new File("src/data/users");
+        if (!usersDB.exists())
+        {
+            try
+            {
+                usersDB.mkdirs();
+                usersDB.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getCompanyIdJTF().getText(), true));
+
+            buf.append(companyInfo);
+
+            buf.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        JOptionPane.showMessageDialog(view,"User created succesfully!");
+
+    }
+    //endregion
 
 
     //region Authorization

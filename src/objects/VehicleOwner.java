@@ -19,6 +19,10 @@ public class VehicleOwner {
 
     }
 
+    public String[] getOwnerInfo(){
+        return null;
+    }
+
     public void calculateVehicleTax(){
 
     }
@@ -34,6 +38,9 @@ public class VehicleOwner {
     }
 
     private Vehicle getVehicle(String vehicleID){
+        if(vehicleID.equals("null")){
+            return null;
+        }
         Vehicle vehicle = null;
         try (BufferedReader br = new BufferedReader(new FileReader("src/data/registeredVehicles/" + vehicleID))) {
             String line;

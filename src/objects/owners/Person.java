@@ -10,9 +10,27 @@ public class Person extends VehicleOwner {
     String firstName,lastName;
     int age;
 
+
     public Person (String firstName){
         fillData(firstName);
     }
+
+    //region Getters
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    @Override
+    public String[] getOwnerInfo(){
+        return new String[]{firstName,lastName};
+    }
+
+    //endregion
 
     public void canOwnVehicle(){
 
@@ -36,4 +54,5 @@ public class Person extends VehicleOwner {
             e.printStackTrace();
         }
     }
+
 }

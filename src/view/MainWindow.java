@@ -116,7 +116,7 @@ public class MainWindow extends JFrame {
         return this.login.getFirstName();
     }
     public JTextField getLoginLastNameJTF(){
-        return this.login.getFirstName();
+        return this.login.getLastName();
     }
     public JTextField getCompanyIdJTF(){
         return this.login.getCompanyID();
