@@ -7,6 +7,8 @@ import objects.owners.Person;
 import view.MainWindow;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 
@@ -26,16 +28,10 @@ public class Brains implements MainWindow.MainWindowListener {
         this.view = view;
 
         //Set listeners
-        view.setRegisterButtonListener(e -> goRegisterButton());
-        view.setSearchButtonListener(e -> goSearchButton());
-        view.setGoBackButtonListener(e -> goBackButton());
+        view.setButtonsListener(e -> buttonsListener(e));
         view.setVehicleTypeRadioListener(e -> vehicleTypeRadio(e));
         view.setVehicleMakerListListener(e -> vehicleMakerList(e));
-        view.setVehicleRegisterButtonListener(e -> vehicleRegisterButton());
-        view.setLoginButtonListener(e -> loginButton());
-        view.setSignUpButtonListener(e -> signUpButton());
         view.setProfileSelectorListener(e -> profileSelectorRadio(e));
-        view.setLogOutButtonListener(e -> logOut());
 
         view.init();
         this.vehicleType = "car";
@@ -43,35 +39,32 @@ public class Brains implements MainWindow.MainWindowListener {
         view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
         view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
 
+
         view.showLoginPanel();
 
+
+
+
     }
+
+
 
     //region Listeners
     @Override
-    public void goRegisterButton() {
-        System.out.println("Register button pressed");
-        view.showRegisterPanel();
+    public void buttonsListener(ActionEvent e) {
+        switch (e.getActionCommand()){
+            case "Main menu" -> view.showMainPanel();
+            case "Register" -> view.showRegisterPanel();
+            case "Register vehicle" -> registerVehicle();
+            case "My vehicles" -> view.showMyVheiclesPanel();
+            case "Search" -> view.showSearchPanel();
+            case "Log out" -> view.showLoginPanel();
+            case "Login" -> login();
+            case "Sign up" -> signUp();
+            default -> System.out.println(e.getActionCommand());
 
-    }
+        }
 
-    @Override
-    public void goSearchButton() {
-        System.out.println("Search button pressed");
-        view.showSearchPanel();
-
-    }
-
-    @Override
-    public void goBackButton() {
-        System.out.println("Go back button pressed");
-        view.showMainPanel();
-    }
-
-    @Override
-    public void logOut() {
-        System.out.println("Log out button pressed");
-        view.showLoginPanel();
     }
 
     @Override
@@ -122,14 +115,9 @@ public class Brains implements MainWindow.MainWindowListener {
         }
     }
 
-    @Override
-    public void vehicleRegisterButton() {
-        System.out.println("Vehicle registration button pressed");
-        registerVehicle();
-    }
 
-    @Override
-    public void loginButton() {
+
+    public void login() {
         System.out.println("Login button pressed");
         switch (this.userType){
             case "person" -> {
@@ -140,33 +128,35 @@ public class Brains implements MainWindow.MainWindowListener {
 
                     view.getLoginFirstNameJTF().setText("");
                     view.getLoginLastNameJTF().setText("");
+                    view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.black));
+                }else{
+                    failedLogin();
                 }
             }
             case "company" -> {
                 if(authorize(view.getCompanyIdJTF().getText())){
                     view.showMainPanel();
 
-                    loggedUser = new Company(Integer.parseInt(view.getCompanyIdJTF().getText()));
+                    loggedUser = new Company(view.getCompanyIdJTF().getText());
 
                     view.getLoginFirstNameJTF().setText("");
                     view.getLoginLastNameJTF().setText("");
-
-                };
+                    view.getCompanyIdJTF().setBorder(new LineBorder(Color.black));
+                }else{
+                    failedLogin();
+                }
             }
         }
 
     }
 
-    @Override
-    public void signUpButton() {
+    public void signUp() {
         System.out.println("Sign up button pressed");
         if (this.userType.equals("person")){
             registerUser();
         }else{
             registerCompany();
         }
-
-
     }
 
     @Override
@@ -222,6 +212,7 @@ public class Brains implements MainWindow.MainWindowListener {
 
     }
 
+    //region Registration
     private void registerVehicle(){
         System.out.println("Type: " + this.vehicleType);
         String vehicleMake = Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString();
@@ -261,7 +252,7 @@ public class Brains implements MainWindow.MainWindowListener {
 
 
         File vehiclesDB = new File("src/data/registeredVehicles");
-        int vehicleID = vehiclesDB.listFiles().length;
+        int vehicleID = Objects.requireNonNull(vehiclesDB.listFiles()).length;
 
         if (!vehiclesDB.exists())
         {
@@ -293,8 +284,7 @@ public class Brains implements MainWindow.MainWindowListener {
 
     }
 
-    //region User Registration
-    //TODO optimization, writing can be one method
+    //TODO optimization, user writing can be one method
     private void registerUser(){
         String age = JOptionPane.showInputDialog(view,"What is your age?","Registration",JOptionPane.PLAIN_MESSAGE);
 
@@ -399,27 +389,28 @@ public class Brains implements MainWindow.MainWindowListener {
     //endregion
 
 
-    //region Authorization
-
     private boolean authorize(String username){
         File file = new File("src/data/users");
-        for(File user:file.listFiles()){
+        for(File user: Objects.requireNonNull(file.listFiles())){
             if(user.getName().equals(username)){
                 return true;
             }
         }
         return false;
     }
-//    private boolean authorize(int companyID){
-//        File file = new File("src/data/users");
-//        for(File user:file.listFiles()){
-//            if(user.getName().equals(String.valueOf(companyID))){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-    //endregion
+
+
+
+
+    private void failedLogin(){
+        if(this.userType.equals("person")){
+            view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.red));
+        }
+        if(this.userType.equals("company")){
+            view.getCompanyIdJTF().setBorder(new LineBorder(Color.red));
+        }
+
+    }
 
 
 }

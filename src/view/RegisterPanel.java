@@ -11,16 +11,14 @@ public class RegisterPanel extends JPanel {
 
 
 
-    public RegisterPanel(ActionListener goBackButtonListener,
-                         ActionListener goSearchButtonListener,
+    public RegisterPanel(ActionListener buttonListener,
                          ActionListener vehicleTypeRadio,
-                         ActionListener vehicleMakersListListener,
-                         ActionListener vehicleRegisterButtonListener){
+                         ActionListener vehicleMakersListListener){
         this.setLayout(new BorderLayout());
 
-        this.add(BorderLayout.NORTH,header(goBackButtonListener,goSearchButtonListener));
+        this.add(BorderLayout.NORTH,header(buttonListener));
         this.add(BorderLayout.CENTER,body(vehicleTypeRadio,vehicleMakersListListener));
-        this.add(BorderLayout.SOUTH,footer(vehicleRegisterButtonListener));
+        this.add(BorderLayout.SOUTH,footer(buttonListener));
     }
 
     //region Setters
@@ -70,9 +68,8 @@ public class RegisterPanel extends JPanel {
     //endregion
 
     //region Header
-    private JPanel header(ActionListener goBackButtonListener, ActionListener searchButtonListener){
-        JPanel header = new JPanel();
-        header.setLayout(new FlowLayout(FlowLayout.CENTER,150,20));
+    private JPanel header(ActionListener buttonListener){
+        JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER,150,20));
 
         //Content
         JLabel title = new JLabel("Vehicle registration");
@@ -84,8 +81,8 @@ public class RegisterPanel extends JPanel {
         goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        goBack.addActionListener(goBackButtonListener);
-        goSearch.addActionListener(searchButtonListener);
+        goBack.addActionListener(buttonListener);
+        goSearch.addActionListener(buttonListener);
 
         //Addding Content
         header.add(goBack);
@@ -196,12 +193,12 @@ public class RegisterPanel extends JPanel {
 
     //region Footer
 
-    private JPanel footer(ActionListener vehicleRegistrationButtonListener){
+    private JPanel footer(ActionListener buttonListener){
         JPanel footer = new JPanel();
 
         //Content
-        JButton registerButton = new JButton("Register");
-        registerButton.addActionListener(vehicleRegistrationButtonListener);
+        JButton registerButton = new JButton("Register vehicle");
+        registerButton.addActionListener(buttonListener);
 
         //Adding Content
         footer.add(registerButton);

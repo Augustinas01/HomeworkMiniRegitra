@@ -4,12 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class SearchPanel extends JPanel {
+public class VehiclesPanel extends JPanel {
 
-    public SearchPanel(ActionListener buttonListener){
+    public VehiclesPanel(ActionListener buttonListener){
         this.setLayout(new BorderLayout());
 
         this.add(BorderLayout.NORTH,header(buttonListener));
+        this.add(BorderLayout.CENTER,body());
 
     }
 
@@ -39,6 +40,20 @@ public class SearchPanel extends JPanel {
     }
     //endregion
 
+    //region Body
 
+    private JPanel body(){
+        JPanel body = new JPanel(new GridLayout(0,4));
+
+        String[] gridHeader = {"Maker","Model","HP","Year"};
+        for(String cell:gridHeader){
+            body.add(new JLabel(cell));
+        }
+
+
+        return  body;
+    }
+
+    //endregion
 
 }

@@ -38,18 +38,18 @@ public class LoginPanel extends JPanel {
     //endregion
 
 
-    public LoginPanel(ActionListener loginButtonListener, ActionListener signUpButtonListener,ActionListener profileSelectorListener){
+    public LoginPanel(ActionListener buttonListener,ActionListener profileSelectorListener){
         this.setLayout(new BorderLayout());
 
         this.personLogin = personLogin();
         this.companyLogin = companyLogin();
         this.loginJP = loginJP();
         this.add(BorderLayout.NORTH,new JLabel("Mini Regitra",SwingConstants.CENTER));
-        this.add(BorderLayout.CENTER,body(loginButtonListener,signUpButtonListener,profileSelectorListener));
+        this.add(BorderLayout.CENTER,body(buttonListener,profileSelectorListener));
     }
 
     //region Body
-    private JPanel body(ActionListener loginButtonListener, ActionListener signUpButtonListener,ActionListener profileSelectorListener){
+    private JPanel body(ActionListener buttonListener,ActionListener profileSelectorListener){
         this.body = new JPanel();
         this.body.setLayout(new FlowLayout(FlowLayout.CENTER,1000,5));
 
@@ -78,8 +78,8 @@ public class LoginPanel extends JPanel {
 
         //Content Settings
 
-        login.addActionListener(loginButtonListener);
-        signUp.addActionListener(signUpButtonListener);
+        login.addActionListener(buttonListener);
+        signUp.addActionListener(buttonListener);
         asPerson.addActionListener(profileSelectorListener);
         asCompany.addActionListener(profileSelectorListener);
 

@@ -10,25 +10,30 @@ public class MainMenuPanel extends JPanel {
 
 
 
-    public MainMenuPanel(ActionListener registerButtonListener, ActionListener searchButtonListener, ActionListener logOutButtonListener){
+    public MainMenuPanel(ActionListener mainMenuListener){
         this.setLayout(new FlowLayout(FlowLayout.CENTER,1000,25));
         this.setOpaque(false);
 
         //Content
         JButton registerButton = new JButton("Register");
         registerButton.setFocusable(false);
-        registerButton.addActionListener(registerButtonListener);
+        registerButton.addActionListener(mainMenuListener);
+
+        JButton myVehiclesButton = new JButton("My vehicles");
+        myVehiclesButton.setFocusable(false);
+        myVehiclesButton.addActionListener(mainMenuListener);
 
         JButton searchButton = new JButton("Search");
         searchButton.setFocusable(false);
-        searchButton.addActionListener(searchButtonListener);
+        searchButton.addActionListener(mainMenuListener);
 
         JButton logOutButton = new JButton("Log out");
         logOutButton.setFocusable(false);
-        logOutButton.addActionListener(logOutButtonListener);
+        logOutButton.addActionListener(mainMenuListener);
 
         //Adding content
         this.add(registerButton);
+        this.add(myVehiclesButton);
         this.add(searchButton);
         this.add(logOutButton);
     }
