@@ -1,13 +1,12 @@
 package objects.owners;
 
+import objects.Vehicle;
 import objects.VehicleOwner;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class Person extends VehicleOwner {
-    String firstName,lastName;
+    String firstName,lastName, type;
     int age;
 
 
@@ -45,7 +44,7 @@ public class Person extends VehicleOwner {
                     case "firstname" -> this.firstName = data[1];
                     case "lastname" -> this.lastName = data[1];
                     case "age" -> this.age = Integer.parseInt(data[1]);
-//                    case "type" -> this.accType = data[1];
+                    case "type" -> this.type = data[1];
                     case "owns" -> super.setVehicleList(data[1].split(";"));
                     case "id" -> super.setId(Integer.parseInt(data[1]));
                 }
@@ -53,6 +52,49 @@ public class Person extends VehicleOwner {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void save(){
+        String userInfo = String.format("firstname,%s%n" +
+                "lastname,%s%n" +
+                "age,%s%n" +
+                "type,%s%n" +
+                "owns,%s%n",this.firstName,this.lastName,this.age,this.type,ownedVehiclesIds());
+
+        File usersDB = new File("src/data/users");
+        if (!usersDB.exists())
+        {
+            try
+            {
+                usersDB.mkdirs();
+                usersDB.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + this.firstName, false));
+
+            buf.append(userInfo);
+
+            buf.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private String ownedVehiclesIds(){
+        StringBuilder ownedids = new StringBuilder();
+        for (Vehicle vehicle:super.getVehiclesList()){
+            ownedids.append(vehicle.getId()).append(";");
+        }
+        return ownedids.substring(0,ownedids.lastIndexOf(";"));
     }
 
 }

@@ -18,9 +18,20 @@ public class Vehicle {
         fillData(vehicleID);
     }
 
+
+    public int getId() {
+        return id;
+    }
+
+    public Object[] getInfo(){
+        return new Object[] {brand,model,horsePower,seats};
+    }
+
     public void calculateTax(){
 
     }
+
+
 
     private void fillData(String vehicleID){
         try (BufferedReader br = new BufferedReader(new FileReader("src/data/registeredVehicles/" + vehicleID))) {

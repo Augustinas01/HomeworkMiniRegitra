@@ -23,6 +23,14 @@ public class VehicleOwner {
         return null;
     }
 
+    public ArrayList<Vehicle> getVehiclesList() {
+        return this.vehiclesList;
+    }
+
+    public void addVehicle(int vehicleId){
+        this.vehiclesList.add(getVehicle(String.valueOf(vehicleId)));
+    }
+
     public void calculateVehicleTax(){
 
     }
@@ -61,21 +69,9 @@ public class VehicleOwner {
         return vehicle;
     }
 
-//    protected void fillData(){
-//        try (BufferedReader br = new BufferedReader(new FileReader("src/data/users/" + this.firstName))) {
-//            String line;
-//            while ((line = br.readLine()) != null) {
-//                String[] data = line.split(",");
-//                switch (data[0]){
-//                    case "firstname" -> this.firstName = data[1];
-//                    case "lastname" -> this.lastName = data[1];
-//                    case "age" -> this.age = Integer.parseInt(data[1]);
-//                    case "type" -> this.accType = data[1];
-//                    case "owns" -> fillVehicles(data[1].split(";"));
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void save(){
+
+    }
+
+
 }

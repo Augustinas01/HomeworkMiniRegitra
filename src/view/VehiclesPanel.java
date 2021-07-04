@@ -6,12 +6,19 @@ import java.awt.event.ActionListener;
 
 public class VehiclesPanel extends JPanel {
 
+
+    JPanel bodyPanel;
+
     public VehiclesPanel(ActionListener buttonListener){
         this.setLayout(new BorderLayout());
 
         this.add(BorderLayout.NORTH,header(buttonListener));
         this.add(BorderLayout.CENTER,body());
 
+    }
+
+    public JPanel getBodyPanel() {
+        return bodyPanel;
     }
 
     //region Header
@@ -43,15 +50,20 @@ public class VehiclesPanel extends JPanel {
     //region Body
 
     private JPanel body(){
-        JPanel body = new JPanel(new GridLayout(0,4));
+        bodyPanel = new JPanel(new BorderLayout());
+        JPanel header = new JPanel(new GridLayout(0,4));
 
-        String[] gridHeader = {"Maker","Model","HP","Year"};
+
+        String[] gridHeader = {"Brand","Model","HP","Year"};
         for(String cell:gridHeader){
-            body.add(new JLabel(cell));
+            header.add(new JLabel(cell));
         }
 
 
-        return  body;
+
+        bodyPanel.add(BorderLayout.NORTH,header);
+
+        return  bodyPanel;
     }
 
     //endregion

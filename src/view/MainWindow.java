@@ -98,6 +98,9 @@ public class MainWindow extends JFrame {
     public JTextField getCompanyIdJTF(){
         return this.login.getCompanyID();
     }
+    public JPanel getMyVehiclesBody(){
+        return this.myVehicles.getBodyPanel();
+    }
 
 
     //endregion
@@ -143,6 +146,10 @@ public class MainWindow extends JFrame {
     }
 
     public void showMainPanel() {
+        if (this.myVehicles.isVisible()){
+            this.myVehicles.setVisible(false);
+            this.remove(this.myVehicles);
+        }
         if (this.register.isVisible()) {
             this.register.setVisible(false);
             this.remove(this.register);
@@ -160,6 +167,10 @@ public class MainWindow extends JFrame {
     }
 
     public void showRegisterPanel(){
+        if (this.myVehicles.isVisible()){
+            this.myVehicles.setVisible(false);
+            this.remove(this.myVehicles);
+        }
         if(this.main.isVisible()){
             this.main.setVisible(false);
             this.remove(this.main);
@@ -186,7 +197,7 @@ public class MainWindow extends JFrame {
 
     }
 
-    public void showMyVheiclesPanel(){
+    public void showMyVehiclesPanel(){
         if(this.main.isVisible()){
             this.main.setVisible(false);
             this.remove(this.main);

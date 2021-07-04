@@ -1,6 +1,7 @@
 package helpers;
 
 
+import objects.Vehicle;
 import objects.VehicleOwner;
 import objects.owners.Company;
 import objects.owners.Person;
@@ -21,6 +22,8 @@ public class Brains implements MainWindow.MainWindowListener {
     private String vehicleType,userType;
 
     private VehicleOwner loggedUser;
+
+    private JPanel vehiclesGrid;
 
 
 
@@ -56,7 +59,7 @@ public class Brains implements MainWindow.MainWindowListener {
             case "Main menu" -> view.showMainPanel();
             case "Register" -> view.showRegisterPanel();
             case "Register vehicle" -> registerVehicle();
-            case "My vehicles" -> view.showMyVheiclesPanel();
+            case "My vehicles" -> showMyVehiclesPanel();
             case "Search" -> view.showSearchPanel();
             case "Log out" -> view.showLoginPanel();
             case "Login" -> login();
@@ -228,16 +231,18 @@ public class Brains implements MainWindow.MainWindowListener {
         String vehicleNumberPlate = view.getNumberPlateJTF().getText();
 
         String vehicleInfo = String.format(
+                "owner,%s;%s%n" +
                 "type,%s%n" +
                 "horsepower,%s%n" +
-                "seatcount,%s%n" +
+                "seats,%s%n" +
                 "brand,%s%n" +
                 "model,%s%n" +
                 "numberplate,%s%n" +
                 "firstregistrationdate,%s%n" +
                 "price,%s%n" +
-                "taxrate,%s%n" +
-                "owner,%s;%s%n",
+                "taxrate,%s%n" ,
+                loggedUser.getOwnerInfo()[0],
+                loggedUser.getOwnerInfo()[1],
                 this.vehicleType,
                 vehicleHP,
                 vehicleSeatCount,
@@ -246,13 +251,11 @@ public class Brains implements MainWindow.MainWindowListener {
                 vehicleNumberPlate,
                 vehicleFirstRegistrationYear,
                 vehiclePrice,
-                null,
-                loggedUser.getOwnerInfo()[0],
-                loggedUser.getOwnerInfo()[1]);
+                null);
 
 
         File vehiclesDB = new File("src/data/registeredVehicles");
-        int vehicleID = Objects.requireNonNull(vehiclesDB.listFiles()).length;
+        int vehicleID = Objects.requireNonNull(vehiclesDB.listFiles()).length-1;
 
         if (!vehiclesDB.exists())
         {
@@ -280,9 +283,27 @@ public class Brains implements MainWindow.MainWindowListener {
         {
             e.printStackTrace();
         }
+        loggedUser.addVehicle(vehicleID);
+        loggedUser.save();
 
 
     }
+
+//    private boolean vehicleRegistrationValidation(){
+//        String vehicleMake = Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString();
+//        String vehicleModel = Objects.requireNonNull(view.getVehicleModelsJCB().getSelectedItem()).toString();
+//        String vehicleFirstRegistrationYear = String.format(
+//                "%s-%s-%s",
+//                view.getRegistrationYearJTF().getText(),
+//                view.getRegistrationMonthJTF().getText(),
+//                view.getRegistrationDayJTF().getText());
+//        String vehicleHP = view.getVehicleHorsePowerJTF().getText();
+//        String vehiclePrice = view.getVehiclePriceJTF().getText();
+//        String vehicleSeatCount = view.getVehicleSeatCountJTF().getText();
+//        String vehicleNumberPlate = view.getNumberPlateJTF().getText();
+//
+//
+//    }
 
     //TODO optimization, user writing can be one method
     private void registerUser(){
@@ -409,6 +430,27 @@ public class Brains implements MainWindow.MainWindowListener {
         if(this.userType.equals("company")){
             view.getCompanyIdJTF().setBorder(new LineBorder(Color.red));
         }
+
+    }
+
+    private void showMyVehiclesPanel(){
+        if(vehiclesGrid != null){
+            if(vehiclesGrid.isVisible()){
+                view.getMyVehiclesBody().remove(vehiclesGrid);
+            }
+        }
+
+        vehiclesGrid = new JPanel(new GridLayout(0,4));
+
+        for(Vehicle vehicle:loggedUser.getVehiclesList()){
+            for(Object obj:vehicle.getInfo()){
+                System.out.println(obj);
+                vehiclesGrid.add(new JLabel(obj.toString()));
+            }
+        }
+
+        view.getMyVehiclesBody().add(vehiclesGrid);
+        view.showMyVehiclesPanel();
 
     }
 
