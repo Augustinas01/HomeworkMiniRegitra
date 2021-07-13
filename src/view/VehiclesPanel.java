@@ -51,12 +51,14 @@ public class VehiclesPanel extends JPanel {
 
     private JPanel body(){
         bodyPanel = new JPanel(new BorderLayout());
-        JPanel header = new JPanel(new GridLayout(0,4));
+        JPanel header = new JPanel(new GridLayout(0,7));
 
 
-        String[] gridHeader = {"Brand","Model","HP","Year"};
-        for(String cell:gridHeader){
-            header.add(new JLabel(cell));
+        String[] gridHeader = {"Brand","Model","HP","Seats","Number plate","Price","Actions"};
+        for(String title:gridHeader){
+            JLabel cell = new JLabel(title);
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+            header.add(cell);
         }
 
 

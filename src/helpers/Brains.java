@@ -6,13 +6,17 @@ import objects.VehicleOwner;
 import objects.owners.Company;
 import objects.owners.Person;
 import view.MainWindow;
+import view.VehiclesPanel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 public class Brains implements MainWindow.MainWindowListener {
@@ -115,50 +119,6 @@ public class Brains implements MainWindow.MainWindowListener {
             case "MAN" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( "MAN")));
             case "Scania" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( "Scania")));
             case "Volvo" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Volvo")));
-        }
-    }
-
-
-
-    public void login() {
-        System.out.println("Login button pressed");
-        switch (this.userType){
-            case "person" -> {
-                if(authorize(view.getLoginFirstNameJTF().getText())){
-                    view.showMainPanel();
-
-                    loggedUser = new Person(view.getLoginFirstNameJTF().getText());
-
-                    view.getLoginFirstNameJTF().setText("");
-                    view.getLoginLastNameJTF().setText("");
-                    view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.black));
-                }else{
-                    failedLogin();
-                }
-            }
-            case "company" -> {
-                if(authorize(view.getCompanyIdJTF().getText())){
-                    view.showMainPanel();
-
-                    loggedUser = new Company(view.getCompanyIdJTF().getText());
-
-                    view.getLoginFirstNameJTF().setText("");
-                    view.getLoginLastNameJTF().setText("");
-                    view.getCompanyIdJTF().setBorder(new LineBorder(Color.black));
-                }else{
-                    failedLogin();
-                }
-            }
-        }
-
-    }
-
-    public void signUp() {
-        System.out.println("Sign up button pressed");
-        if (this.userType.equals("person")){
-            registerUser();
-        }else{
-            registerCompany();
         }
     }
 
@@ -434,24 +394,99 @@ public class Brains implements MainWindow.MainWindowListener {
     }
 
     private void showMyVehiclesPanel(){
+        view.setMyVehicles(new VehiclesPanel(view.getButtonsListener()));
+        JPanel vehiclesGridBody = new JPanel(new FlowLayout());
         if(vehiclesGrid != null){
-            if(vehiclesGrid.isVisible()){
-                view.getMyVehiclesBody().remove(vehiclesGrid);
-            }
+                view.getMyVehiclesBody().remove(vehiclesGridBody);
+                vehiclesGridBody.remove(vehiclesGrid);
         }
 
-        vehiclesGrid = new JPanel(new GridLayout(0,4));
+        vehiclesGrid = new JPanel(new GridLayout(0,7));
+        vehiclesGrid.setPreferredSize(new Dimension(view.getWidth(), 150));
 
         for(Vehicle vehicle:loggedUser.getVehiclesList()){
-            for(Object obj:vehicle.getInfo()){
-                System.out.println(obj);
-                vehiclesGrid.add(new JLabel(obj.toString()));
+
+            LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
+
+            vehicleInfo.forEach((info,stat) -> {
+                switch (info){
+                    case "brand", "model", "horsePower", "seats", "numberPlate", "price" -> {
+                        JLabel cell = new JLabel(stat.toString());
+                        cell.setHorizontalAlignment(SwingConstants.CENTER);
+                        cell.setBorder(new LineBorder(Color.BLACK));
+                        vehiclesGrid.add(cell);
+
+                    }
+                    case "id" -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
+
+                }
+            });
+        }
+        vehiclesGridBody.add(vehiclesGrid);
+
+
+
+        view.getMyVehiclesBody().add(vehiclesGridBody);
+        view.showMyVehiclesPanel();
+
+    }
+
+    public void login() {
+        System.out.println("Login button pressed");
+        switch (this.userType){
+            case "person" -> {
+                if(authorize(view.getLoginFirstNameJTF().getText())){
+                    view.showMainPanel();
+
+                    loggedUser = new Person(view.getLoginFirstNameJTF().getText());
+
+                    view.getLoginFirstNameJTF().setText("");
+                    view.getLoginLastNameJTF().setText("");
+                    view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.black));
+                }else{
+                    failedLogin();
+                }
+            }
+            case "company" -> {
+                if(authorize(view.getCompanyIdJTF().getText())){
+                    view.showMainPanel();
+
+                    loggedUser = new Company(view.getCompanyIdJTF().getText());
+
+                    view.getLoginFirstNameJTF().setText("");
+                    view.getLoginLastNameJTF().setText("");
+                    view.getCompanyIdJTF().setBorder(new LineBorder(Color.black));
+                }else{
+                    failedLogin();
+                }
             }
         }
 
-        view.getMyVehiclesBody().add(vehiclesGrid);
-        view.showMyVehiclesPanel();
+    }
 
+    public void signUp() {
+        System.out.println("Sign up button pressed");
+        if (this.userType.equals("person")){
+            registerUser();
+        }else{
+            registerCompany();
+        }
+    }
+
+    private JPanel vehicleGridEdit(String id){
+        JPanel editCell = new JPanel(new GridLayout(1,2));
+        JButton delButton = new JButton("DEL");
+        JButton editButton = new JButton("EDIT");
+        delButton.setActionCommand(id);
+        delButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(delButton.getActionCommand());
+            }
+        });
+        editCell.add(editButton);
+        editCell.add(delButton);
+        return editCell;
     }
 
 

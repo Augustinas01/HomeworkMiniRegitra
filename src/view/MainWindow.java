@@ -46,6 +46,10 @@ public class MainWindow extends JFrame {
         this.profileSelectorListener = profileSelectorListener;
     }
 
+    public void setMyVehicles(VehiclesPanel myVehicles) {
+        this.myVehicles = myVehicles;
+        this.myVehicles.setVisible(false);
+    }
     //endregion
 
     //region Getters
@@ -102,7 +106,9 @@ public class MainWindow extends JFrame {
         return this.myVehicles.getBodyPanel();
     }
 
-
+    public ActionListener getButtonsListener() {
+        return buttonsListener;
+    }
     //endregion
 
     public void init(){
