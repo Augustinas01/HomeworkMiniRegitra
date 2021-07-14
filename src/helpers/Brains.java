@@ -6,6 +6,7 @@ import objects.VehicleOwner;
 import objects.owners.Company;
 import objects.owners.Person;
 import view.MainWindow;
+import view.VehicleEditPanel;
 import view.VehiclesPanel;
 
 import javax.swing.*;
@@ -28,6 +29,10 @@ public class Brains implements MainWindow.MainWindowListener {
     private VehicleOwner loggedUser;
 
     private JPanel vehiclesGrid;
+
+    private VehicleEditPanel vehicleEditPanel;
+
+    private JDialog editDialog;
 
 
 
@@ -148,6 +153,22 @@ public class Brains implements MainWindow.MainWindowListener {
         }
 
     }
+    private void delButtonListener(ActionEvent e) {
+        Vehicle selectedVehicle = loggedUser.getVehiclesMap().get(e.getActionCommand());
+
+        int confirmResult = JOptionPane.showConfirmDialog(view,
+                String.format("Do you really want to remove this vehicle?\n\n%s: %s\nNumber plate: %s",
+                        selectedVehicle.getBrand(), selectedVehicle.getModel(), selectedVehicle.getNumberPlate()),
+                "Removal confirmation",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirmResult == JOptionPane.YES_OPTION) {
+            loggedUser.removeVehicle(e.getActionCommand());
+            loggedUser.save();
+            showMyVehiclesPanel();
+
+        }
+    }
     //endregion
 
 
@@ -243,7 +264,7 @@ public class Brains implements MainWindow.MainWindowListener {
         {
             e.printStackTrace();
         }
-        loggedUser.addVehicle(vehicleID);
+        loggedUser.addVehicleToMap(vehicleID);
         loggedUser.save();
 
 
@@ -394,6 +415,9 @@ public class Brains implements MainWindow.MainWindowListener {
     }
 
     private void showMyVehiclesPanel(){
+        if(view.getMyVehicles().isVisible()){
+            view.remove(view.getMyVehicles());
+        }
         view.setMyVehicles(new VehiclesPanel(view.getButtonsListener()));
         JPanel vehiclesGridBody = new JPanel(new FlowLayout());
         if(vehiclesGrid != null){
@@ -402,9 +426,13 @@ public class Brains implements MainWindow.MainWindowListener {
         }
 
         vehiclesGrid = new JPanel(new GridLayout(0,7));
-        vehiclesGrid.setPreferredSize(new Dimension(view.getWidth(), 150));
+//        vehiclesGrid.setPreferredSize(new Dimension(view.getWidth(), view.getHeight()/2));
 
-        for(Vehicle vehicle:loggedUser.getVehiclesList()){
+//        for(Vehicle vehicle:loggedUser.getVehiclesList()){
+
+        loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
+
+
 
             LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
 
@@ -421,7 +449,8 @@ public class Brains implements MainWindow.MainWindowListener {
 
                 }
             });
-        }
+        });
+//        }
         vehiclesGridBody.add(vehiclesGrid);
 
 
@@ -477,17 +506,53 @@ public class Brains implements MainWindow.MainWindowListener {
         JPanel editCell = new JPanel(new GridLayout(1,2));
         JButton delButton = new JButton("DEL");
         JButton editButton = new JButton("EDIT");
+
         delButton.setActionCommand(id);
-        delButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(delButton.getActionCommand());
-            }
-        });
-        editCell.add(editButton);
+        delButton.addActionListener(e -> delButtonListener(e));
+
+        editButton.setActionCommand(id);
+        editButton.addActionListener(e -> editButtonListener(e));
+
         editCell.add(delButton);
+        editCell.add(editButton);
         return editCell;
     }
+
+    private void editButtonListener(ActionEvent e){
+        editDialog = new JDialog();
+        vehicleEditPanel = new VehicleEditPanel(loggedUser.getVehiclesMap().get(e.getActionCommand()).getInfo(),e1 -> editDialogListener(e1,e));
+        editDialog.setTitle("Editing - " +loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
+        editDialog.setLayout(new FlowLayout());
+        editDialog.add(vehicleEditPanel);
+        editDialog.pack();
+        editDialog.setLocationRelativeTo(view);
+        editDialog.setVisible(true);
+    }
+
+    private void editDialogListener(ActionEvent e1,ActionEvent e){
+        switch (e1.getActionCommand()){
+            case "Cancel" -> editDialog.dispose();
+            case "Change" -> {
+                loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
+                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getBrand());
+                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
+                loggedUser.save();
+                showMyVehiclesPanel();
+                editDialog.dispose();
+            }
+        }
+
+    }
+
+//    private void changeVehicleInfo(String vehicleId){
+//        System.out.println("Info changed");
+//        HashMap<String,String> editedInfo = vehicleEditPanel.getDialogTFsStrings();
+//        editedInfo.forEach((vehicleInfo,textFieldString) -> {
+//            loggedUser.getVehiclesMap().get(vehicleId).
+//        });
+//    }
+
+
 
 
 }

@@ -27,7 +27,11 @@ public class MainWindow extends JFrame {
         this.setTitle(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
-        this.setSize(800,600);
+//        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+//        this.setLocation(dim.width/3, dim.height/3);
+        this.setSize(850,600);
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
         this.getContentPane().setBackground(Color.decode("#f4f4f4"));
     }
 
@@ -102,8 +106,15 @@ public class MainWindow extends JFrame {
     public JTextField getCompanyIdJTF(){
         return this.login.getCompanyID();
     }
+    public VehiclesPanel getMyVehicles() {
+        return this.myVehicles;
+    }
     public JPanel getMyVehiclesBody(){
         return this.myVehicles.getBodyPanel();
+    }
+
+    public RegisterPanel getRegister() {
+        return register;
     }
 
     public ActionListener getButtonsListener() {

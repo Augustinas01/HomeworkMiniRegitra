@@ -77,7 +77,25 @@ public class Vehicle {
         info.put("numberPlate",numberPlate);
         info.put("price",price);
         info.put("id",id);
+        info.put("registrationDate",firstRegistrationDate);
         return info;
+    }
+
+    public void setInfo(HashMap<String,String> infoMap){
+        infoMap.forEach((key,value) ->{
+            switch (key){
+                case "brand" -> this.brand = value;
+                case "model" -> this.model = value;
+                case "horsePower" -> this.horsePower = Integer.parseInt(value);
+                case "seats" -> this.seats = Integer.parseInt(value);
+                case "vehicleNumberPlate" -> this.numberPlate = value;
+                case "price" -> this.price = new BigDecimal(value);
+                case "registrationYear" -> this.firstRegistrationDate = LocalDate.of(Integer.parseInt(value),
+                                                                                     Integer.parseInt(infoMap.get("registrationMonth")),
+                                                                                     Integer.parseInt(infoMap.get("registrationDay")));
+            }
+        });
+
     }
 
     public void calculateTax(){
@@ -99,11 +117,16 @@ public class Vehicle {
                     case "model" -> this.model = data[1];
                     case "numberplate" -> this.numberPlate = data[1];
                     case "price" -> this.price = new BigDecimal(data[1]);
+                    case "firstregistrationdate" -> this.firstRegistrationDate = LocalDate.parse(data[1]);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void save(){
+
     }
 
 }
