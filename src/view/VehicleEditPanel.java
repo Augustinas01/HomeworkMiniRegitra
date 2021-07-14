@@ -1,5 +1,7 @@
 package view;
 
+import objects.Vehicle;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -23,15 +25,12 @@ public class VehicleEditPanel extends JPanel {
 
     public HashMap<String,String> getDialogTFsStrings(){
         HashMap<String,String> textFields = new HashMap<>();
-        textFields.put("registrationYear",registrationYearTF.getText());
-        textFields.put("registrationMonth",registrationMonthTF.getText());
-        textFields.put("registrationDay",registrationDayTF.getText());
-        textFields.put("vehicleHP",vehicleHPTF.getText());
-        textFields.put("vehiclePrice",vehiclePriceTF.getText());
-        textFields.put("vehicleSeats",vehicleSeatCountTF.getText());
-        textFields.put("vehicleNumberPlate", vehicleNumberPlateTF.getText());
+        textFields.put(Vehicle.REGISTRATION_DATE,String.format("%s-%s-%s",registrationYearTF.getText(),registrationMonthTF.getText(),registrationDayTF.getText()));
+        textFields.put(Vehicle.HORSE_POWER,vehicleHPTF.getText());
+        textFields.put(Vehicle.PRICE,vehiclePriceTF.getText());
+        textFields.put(Vehicle.SEATS,vehicleSeatCountTF.getText());
+        textFields.put(Vehicle.NUMBER_PLATE, vehicleNumberPlateTF.getText());
         return textFields;
-
     }
 
     public JTextField getRegistrationYearTF() {
@@ -144,15 +143,15 @@ public class VehicleEditPanel extends JPanel {
     //endregion
 
     private void setInfo(LinkedHashMap<String,Object> vehicleInfo){
-        LocalDate vehicleRegistrationDate =(LocalDate) vehicleInfo.get("registrationDate");
+        LocalDate vehicleRegistrationDate =(LocalDate) vehicleInfo.get(Vehicle.REGISTRATION_DATE);
         this.registrationYearTF.setText(String.valueOf(vehicleRegistrationDate.getYear()));
         this.registrationMonthTF.setText(String.valueOf(vehicleRegistrationDate.getMonthValue()));
         this.registrationDayTF.setText(String.valueOf(vehicleRegistrationDate.getDayOfMonth()));
 
-        this.vehicleHPTF.setText(vehicleInfo.get("horsePower").toString());
-        this.vehiclePriceTF.setText(vehicleInfo.get("price").toString());
-        this.vehicleSeatCountTF.setText(vehicleInfo.get("seats").toString());
-        this.vehicleNumberPlateTF.setText(vehicleInfo.get("numberPlate").toString());
+        this.vehicleHPTF.setText(vehicleInfo.get(Vehicle.HORSE_POWER).toString());
+        this.vehiclePriceTF.setText(vehicleInfo.get(Vehicle.PRICE).toString());
+        this.vehicleSeatCountTF.setText(vehicleInfo.get(Vehicle.SEATS).toString());
+        this.vehicleNumberPlateTF.setText(vehicleInfo.get(Vehicle.NUMBER_PLATE).toString());
     }
 
 

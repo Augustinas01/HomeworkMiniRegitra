@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class MainWindow extends JFrame {
 
@@ -84,6 +85,9 @@ public class MainWindow extends JFrame {
     }
     public JTextField getNumberPlateJTF(){
         return this.register.getVehicleNumberPlateTF();
+    }
+    public HashMap<String,String> getRegInfoMap() {
+        return this.register.getRegInfoMap();
     }
     public LoginPanel getLoginJP() {
         return this.login;

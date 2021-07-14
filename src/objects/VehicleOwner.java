@@ -25,17 +25,15 @@ public class VehicleOwner {
         return null;
     }
 
-    public ArrayList<Vehicle> getVehiclesList() {
-        return this.vehiclesList;
-    }
-
     public HashMap<String, Vehicle> getVehiclesMap() {
         return vehiclesMap;
     }
 
-    public void addVehicle(int vehicleId){
-        this.vehiclesList.add(getVehicle(String.valueOf(vehicleId)));
+
+    public void addVehicleToMap(Vehicle vehicle){
+        this.vehiclesMap.put(String.valueOf(vehicle.getId()),vehicle);
     }
+
     public void addVehicleToMap(int vehicleId){
         this.vehiclesMap.put(String.valueOf(vehicleId),getVehicle(String.valueOf(vehicleId)));
     }
@@ -75,16 +73,17 @@ public class VehicleOwner {
                 String [] data = line.split(",");
                 if ("type".equals(data[0])) {
                     switch (data[1]) {
-                        case "car" -> vehicle = new Car(vehicleID);
-                        case "supercar" -> vehicle = new Supercar(vehicleID);
-                        case "truck" -> vehicle = new Truck(vehicleID);
-                        case "motorcycle" -> vehicle = new Motorcycle(vehicleID);
+                        case "car" -> vehicle = new Car(this, "car");
+                        case "supercar" -> vehicle = new Supercar(this, "supercar");
+                        case "truck" -> vehicle = new Truck(this, "truck");
+                        case "motorcycle" -> vehicle = new Motorcycle(this, "motorcycle");
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        vehicle.fillData(vehicleID);
         return vehicle;
     }
 

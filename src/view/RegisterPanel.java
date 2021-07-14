@@ -1,8 +1,12 @@
 package view;
 
+import objects.Vehicle;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class RegisterPanel extends JPanel {
 
@@ -65,6 +69,19 @@ public class RegisterPanel extends JPanel {
     public JTextField getVehicleNumberPlateTF() {
         return vehicleNumberPlateTF;
     }
+
+    public HashMap<String,String> getRegInfoMap(){
+        HashMap<String,String> info = new HashMap<>();
+        info.put(Vehicle.REGISTRATION_DATE,String.format("%s-%s-%s",registrationYear.getText(),registrationMonth.getText(),registrationDay.getText()));
+        info.put(Vehicle.HORSE_POWER,vehicleHPTextField.getText());
+        info.put(Vehicle.PRICE,vehiclePriceTF.getText());
+        info.put(Vehicle.SEATS,vehicleSeatCountTF.getText());
+        info.put(Vehicle.NUMBER_PLATE, vehicleNumberPlateTF.getText());
+        info.put(Vehicle.BRAND, Objects.requireNonNull(vehicleMakersList.getSelectedItem()).toString());
+        info.put(Vehicle.MODEL, Objects.requireNonNull(vehicleModelsList.getSelectedItem()).toString());
+        return info;
+    }
+
     //endregion
 
     //region Header

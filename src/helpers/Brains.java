@@ -5,6 +5,10 @@ import objects.Vehicle;
 import objects.VehicleOwner;
 import objects.owners.Company;
 import objects.owners.Person;
+import objects.vehicles.Car;
+import objects.vehicles.Motorcycle;
+import objects.vehicles.Supercar;
+import objects.vehicles.Truck;
 import view.MainWindow;
 import view.VehicleEditPanel;
 import view.VehiclesPanel;
@@ -13,10 +17,8 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
@@ -51,11 +53,7 @@ public class Brains implements MainWindow.MainWindowListener {
         view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
         view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
 
-
         view.showLoginPanel();
-
-
-
 
     }
 
@@ -197,78 +195,21 @@ public class Brains implements MainWindow.MainWindowListener {
     }
 
     //region Registration
+
     private void registerVehicle(){
-        System.out.println("Type: " + this.vehicleType);
-        String vehicleMake = Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString();
-        String vehicleModel = Objects.requireNonNull(view.getVehicleModelsJCB().getSelectedItem()).toString();
-        String vehicleFirstRegistrationYear = String.format(
-                "%s-%s-%s",
-                view.getRegistrationYearJTF().getText(),
-                view.getRegistrationMonthJTF().getText(),
-                view.getRegistrationDayJTF().getText());
-        String vehicleHP = view.getVehicleHorsePowerJTF().getText();
-        String vehiclePrice = view.getVehiclePriceJTF().getText();
-        String vehicleSeatCount = view.getVehicleSeatCountJTF().getText();
-        String vehicleNumberPlate = view.getNumberPlateJTF().getText();
-
-        String vehicleInfo = String.format(
-                "owner,%s;%s%n" +
-                "type,%s%n" +
-                "horsepower,%s%n" +
-                "seats,%s%n" +
-                "brand,%s%n" +
-                "model,%s%n" +
-                "numberplate,%s%n" +
-                "firstregistrationdate,%s%n" +
-                "price,%s%n" +
-                "taxrate,%s%n" ,
-                loggedUser.getOwnerInfo()[0],
-                loggedUser.getOwnerInfo()[1],
-                this.vehicleType,
-                vehicleHP,
-                vehicleSeatCount,
-                vehicleMake,
-                vehicleModel,
-                vehicleNumberPlate,
-                vehicleFirstRegistrationYear,
-                vehiclePrice,
-                null);
-
-
-        File vehiclesDB = new File("src/data/registeredVehicles");
-        int vehicleID = Objects.requireNonNull(vehiclesDB.listFiles()).length-1;
-
-        if (!vehiclesDB.exists())
-        {
-            try
-            {
-                vehiclesDB.mkdirs();
-                vehiclesDB.createNewFile();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+        Vehicle vehicle = null;
+        switch (this.vehicleType){
+            case "car"        -> vehicle = new Car(loggedUser, vehicleType);
+            case "motorcycle" -> vehicle = new Motorcycle(loggedUser, vehicleType);
+            case "truck"      -> vehicle = new Truck(loggedUser,vehicleType);
+            case "supercar"   -> vehicle = new Supercar(loggedUser,vehicleType);
         }
-        try
-        {
-            BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB + "/" + vehicleID, true));
-
-            buf.append("id,").append(String.valueOf(vehicleID));
-            buf.newLine();
-            buf.append(vehicleInfo);
-
-            buf.close();
+        if(vehicle != null) {
+            vehicle.setInfo(view.getRegInfoMap());
+            vehicle.save();
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        loggedUser.addVehicleToMap(vehicleID);
-        loggedUser.save();
-
-
     }
+
 
 //    private boolean vehicleRegistrationValidation(){
 //        String vehicleMake = Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString();
@@ -391,75 +332,6 @@ public class Brains implements MainWindow.MainWindowListener {
     //endregion
 
 
-    private boolean authorize(String username){
-        File file = new File("src/data/users");
-        for(File user: Objects.requireNonNull(file.listFiles())){
-            if(user.getName().equals(username)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-
-    private void failedLogin(){
-        if(this.userType.equals("person")){
-            view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.red));
-        }
-        if(this.userType.equals("company")){
-            view.getCompanyIdJTF().setBorder(new LineBorder(Color.red));
-        }
-
-    }
-
-    private void showMyVehiclesPanel(){
-        if(view.getMyVehicles().isVisible()){
-            view.remove(view.getMyVehicles());
-        }
-        view.setMyVehicles(new VehiclesPanel(view.getButtonsListener()));
-        JPanel vehiclesGridBody = new JPanel(new FlowLayout());
-        if(vehiclesGrid != null){
-                view.getMyVehiclesBody().remove(vehiclesGridBody);
-                vehiclesGridBody.remove(vehiclesGrid);
-        }
-
-        vehiclesGrid = new JPanel(new GridLayout(0,7));
-//        vehiclesGrid.setPreferredSize(new Dimension(view.getWidth(), view.getHeight()/2));
-
-//        for(Vehicle vehicle:loggedUser.getVehiclesList()){
-
-        loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
-
-
-
-            LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
-
-            vehicleInfo.forEach((info,stat) -> {
-                switch (info){
-                    case "brand", "model", "horsePower", "seats", "numberPlate", "price" -> {
-                        JLabel cell = new JLabel(stat.toString());
-                        cell.setHorizontalAlignment(SwingConstants.CENTER);
-                        cell.setBorder(new LineBorder(Color.BLACK));
-                        vehiclesGrid.add(cell);
-
-                    }
-                    case "id" -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
-
-                }
-            });
-        });
-//        }
-        vehiclesGridBody.add(vehiclesGrid);
-
-
-
-        view.getMyVehiclesBody().add(vehiclesGridBody);
-        view.showMyVehiclesPanel();
-
-    }
-
     public void login() {
         System.out.println("Login button pressed");
         switch (this.userType){
@@ -502,6 +374,73 @@ public class Brains implements MainWindow.MainWindowListener {
         }
     }
 
+
+
+    private boolean authorize(String username){
+        File file = new File("src/data/users");
+        for(File user: Objects.requireNonNull(file.listFiles())){
+            if(user.getName().equals(username)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+    private void failedLogin(){
+        if(this.userType.equals("person")){
+            view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.red));
+        }
+        if(this.userType.equals("company")){
+            view.getCompanyIdJTF().setBorder(new LineBorder(Color.red));
+        }
+
+    }
+
+    private void showMyVehiclesPanel(){
+        if(view.getMyVehicles().isVisible()){
+            view.remove(view.getMyVehicles());
+        }
+        view.setMyVehicles(new VehiclesPanel(view.getButtonsListener()));
+        JPanel vehiclesGridBody = new JPanel(new FlowLayout());
+        if(vehiclesGrid != null){
+                view.getMyVehiclesBody().remove(vehiclesGridBody);
+                vehiclesGridBody.remove(vehiclesGrid);
+        }
+
+        vehiclesGrid = new JPanel(new GridLayout(0,7));
+
+        loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
+
+
+
+            LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
+
+            vehicleInfo.forEach((info,stat) -> {
+                switch (info){
+                    case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.SEATS, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
+                        JLabel cell = new JLabel(stat.toString());
+                        cell.setHorizontalAlignment(SwingConstants.CENTER);
+                        cell.setBorder(new LineBorder(Color.BLACK));
+                        vehiclesGrid.add(cell);
+
+                    }
+                    case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
+
+                }
+            });
+        });
+        vehiclesGridBody.add(vehiclesGrid);
+
+
+
+        view.getMyVehiclesBody().add(vehiclesGridBody);
+        view.showMyVehiclesPanel();
+
+    }
+
     private JPanel vehicleGridEdit(String id){
         JPanel editCell = new JPanel(new GridLayout(1,2));
         JButton delButton = new JButton("DEL");
@@ -534,6 +473,7 @@ public class Brains implements MainWindow.MainWindowListener {
             case "Cancel" -> editDialog.dispose();
             case "Change" -> {
                 loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
+                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
                 System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getBrand());
                 System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
                 loggedUser.save();
@@ -541,18 +481,6 @@ public class Brains implements MainWindow.MainWindowListener {
                 editDialog.dispose();
             }
         }
-
     }
-
-//    private void changeVehicleInfo(String vehicleId){
-//        System.out.println("Info changed");
-//        HashMap<String,String> editedInfo = vehicleEditPanel.getDialogTFsStrings();
-//        editedInfo.forEach((vehicleInfo,textFieldString) -> {
-//            loggedUser.getVehiclesMap().get(vehicleId).
-//        });
-//    }
-
-
-
 
 }

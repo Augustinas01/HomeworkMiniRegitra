@@ -45,7 +45,6 @@ public class Person extends VehicleOwner {
                     case "lastname" -> this.lastName = data[1];
                     case "age" -> this.age = Integer.parseInt(data[1]);
                     case "type" -> this.type = data[1];
-//                    case "owns" -> super.setVehicleList(data[1].split(";"));
                     case "owns" -> super.setVehiclesMap(data[1].split(";"));
                     case "id" -> super.setId(Integer.parseInt(data[1]));
                 }
