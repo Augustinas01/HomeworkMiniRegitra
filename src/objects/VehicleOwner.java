@@ -15,6 +15,7 @@ public class VehicleOwner {
 
     public static final String TYPE_PERSON = "Person";
     public static final String TYPE_COMPANY = "Company";
+    public static final String TYPE_ADMIN = "admin";
 
     int id;
     ArrayList<Vehicle> vehiclesList = new ArrayList<>();

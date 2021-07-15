@@ -12,6 +12,7 @@ import java.util.Objects;
 public class Vehicle {
 
     public static final String ID = "id";
+    public static final String OWNER = "owner";
     public static final String HORSE_POWER = "horsePower";
     public static final String SEATS = "seats";
     public static final String BRAND = "brand";
@@ -81,7 +82,6 @@ public class Vehicle {
     public int getId() {
         return id;
     }
-    //endregion
 
     public LinkedHashMap<String,Object> getInfo(){
         LinkedHashMap<String, Object> info = new LinkedHashMap<>();
@@ -95,6 +95,12 @@ public class Vehicle {
         info.put(REGISTRATION_DATE, firstRegistrationDate);
         return info;
     }
+    //endregion
+
+
+    public void setOwner(VehicleOwner owner) {
+        this.owner = owner;
+    }
 
     public void setInfo(HashMap<String,String> infoMap){
         infoMap.forEach((key,value) ->{
@@ -106,6 +112,7 @@ public class Vehicle {
                 case NUMBER_PLATE -> this.numberPlate = value;
                 case PRICE -> this.price = new BigDecimal(value);
                 case REGISTRATION_DATE -> this.firstRegistrationDate = LocalDate.parse(value);
+                case ID -> this.id = Integer.parseInt(value);
             }
         });
 

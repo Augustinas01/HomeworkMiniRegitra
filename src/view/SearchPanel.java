@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 
 public class SearchPanel extends JPanel {
 
+    JPanel bodyPanel;
+
     public SearchPanel(ActionListener buttonListener){
         this.setLayout(new BorderLayout());
 
@@ -41,6 +43,28 @@ public class SearchPanel extends JPanel {
 
         return header;
     }
+    //endregion
+
+    //region Body
+
+    private JPanel body(){
+        bodyPanel = new JPanel(new BorderLayout());
+        String[] gridHeader = {"Brand","Model","HP","Seats","Number plate","Price","Actions"};
+
+        JPanel header = new JPanel(new GridLayout(0, gridHeader.length));
+
+        for(String title:gridHeader){
+            JLabel cell = new JLabel(title);
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+            header.add(cell);
+        }
+
+        bodyPanel.add(BorderLayout.NORTH,header);
+
+        return  bodyPanel;
+    }
+
+
     //endregion
 
 

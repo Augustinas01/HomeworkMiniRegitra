@@ -66,15 +66,15 @@ public class Brains implements MainWindow.MainWindowListener {
     @Override
     public void buttonsListener(ActionEvent e) {
         switch (e.getActionCommand()){
-            case Buttons.MAIN_MENU -> view.showMainPanel();
-            case Buttons.REGISTER -> view.showRegisterPanel();
-            case Buttons.REGISTER_VEHICLE -> registerVehicle();
-            case Buttons.MY_VEHICLES -> showMyVehiclesPanel();
-            case Buttons.SEARCH -> view.showSearchPanel();
-            case Buttons.LOG_OUT -> view.showLoginPanel();
-            case Buttons.LOGIN -> login();
-            case Buttons.SIGN_UP -> signUp();
-            default -> System.out.println(e.getActionCommand());
+            case Buttons.MAIN_MENU         -> view.showMainPanel();
+            case Buttons.REGISTER          -> view.showRegisterPanel();
+            case Buttons.REGISTER_VEHICLE  -> registerVehicle();
+            case Buttons.MY_VEHICLES       -> showMyVehiclesPanel();
+            case Buttons.SEARCH            -> view.showSearchPanel();
+            case Buttons.LOG_OUT           -> view.showLoginPanel();
+            case Buttons.LOGIN             -> login();
+            case Buttons.SIGN_UP           -> signUp();
+            default                        -> System.out.println(e.getActionCommand());
 
         }
 
@@ -388,6 +388,45 @@ public class Brains implements MainWindow.MainWindowListener {
 
     }
 
+    private void showVehiclesPanel(){
+        if(view.getMyVehicles().isVisible()){
+            view.remove(view.getMyVehicles());
+        }
+        view.setMyVehicles(new VehiclesPanel(view.getButtonsListener()));
+        JPanel vehiclesGridBody = new JPanel(new FlowLayout());
+        if(vehiclesGrid != null){
+            view.getMyVehiclesBody().remove(vehiclesGridBody);
+            vehiclesGridBody.remove(vehiclesGrid);
+        }
+
+        vehiclesGrid = new JPanel(new GridLayout(0,7));
+
+        loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
+
+
+
+            LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
+
+            vehicleInfo.forEach((info,stat) -> {
+                switch (info){
+                    case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.SEATS, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
+                        JLabel cell = new JLabel(stat.toString());
+                        cell.setHorizontalAlignment(SwingConstants.CENTER);
+                        cell.setBorder(new LineBorder(Color.BLACK));
+                        vehiclesGrid.add(cell);
+
+                    }
+                    case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
+
+                }
+            });
+        });
+        vehiclesGridBody.add(vehiclesGrid);
+
+        view.getMyVehiclesBody().add(vehiclesGridBody);
+        view.showMyVehiclesPanel();
+    }
+
     private void showMyVehiclesPanel(){
         if(view.getMyVehicles().isVisible()){
             view.remove(view.getMyVehicles());
@@ -423,11 +462,8 @@ public class Brains implements MainWindow.MainWindowListener {
         });
         vehiclesGridBody.add(vehiclesGrid);
 
-
-
         view.getMyVehiclesBody().add(vehiclesGridBody);
         view.showMyVehiclesPanel();
-
     }
 
     private JPanel vehicleGridEdit(String id){
