@@ -1,5 +1,7 @@
 package view;
 
+import data.constants.Buttons;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -19,21 +21,23 @@ public class SearchPanel extends JPanel {
 
         //Content
         JLabel title = new JLabel("Vehicle search");
-        JButton goSearch = new JButton("Register");
-        JButton goBack = new JButton("Main menu");
-
-        //Content Settings
-        goBack.setHorizontalAlignment(SwingConstants.LEFT);
-        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
+        JButton goRegister = new JButton("Register");
+        goRegister.setHorizontalAlignment(SwingConstants.RIGHT);
+        goRegister.setActionCommand(Buttons.REGISTER);
+        goRegister.addActionListener(buttonListener);
+
+        JButton goBack = new JButton("Main menu");
+        goBack.setHorizontalAlignment(SwingConstants.LEFT);
+        goBack.setActionCommand(Buttons.MAIN_MENU);
         goBack.addActionListener(buttonListener);
-        goSearch.addActionListener(buttonListener);
+
 
         //Addding Content
         header.add(goBack);
         header.add(title);
-        header.add(goSearch);
+        header.add(goRegister);
 
         return header;
     }

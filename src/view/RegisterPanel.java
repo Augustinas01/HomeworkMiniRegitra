@@ -1,5 +1,6 @@
 package view;
 
+import data.constants.Buttons;
 import objects.Vehicle;
 
 import javax.swing.*;
@@ -90,16 +91,18 @@ public class RegisterPanel extends JPanel {
 
         //Content
         JLabel title = new JLabel("Vehicle registration");
-        JButton goSearch = new JButton("Search");
-        JButton goBack = new JButton("Main menu");
-
-        //Content Settings
-        goBack.setHorizontalAlignment(SwingConstants.LEFT);
-        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        goBack.addActionListener(buttonListener);
+        JButton goSearch = new JButton("Search");
+        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
+        goSearch.setActionCommand(Buttons.SEARCH);
         goSearch.addActionListener(buttonListener);
+
+        JButton goBack = new JButton("Main menu");
+        goBack.setHorizontalAlignment(SwingConstants.LEFT);
+        goBack.setActionCommand(Buttons.MAIN_MENU);
+        goBack.addActionListener(buttonListener);
+
 
         //Addding Content
         header.add(goBack);
@@ -128,14 +131,19 @@ public class RegisterPanel extends JPanel {
         //endregion
         //region Radio Buttons
         JRadioButton radioCar = new JRadioButton("Car");
-        JRadioButton radioMotorcycle = new JRadioButton("Motorcycle");
-        JRadioButton radioTruck = new JRadioButton("Truck");
-        JRadioButton radioSuperCar = new JRadioButton("Supercar");
-
-
+        radioCar.setActionCommand(Vehicle.TYPE_CAR);
         radioCar.addActionListener(vehicleTypeRadioListener);
+
+        JRadioButton radioMotorcycle = new JRadioButton("Motorcycle");
+        radioMotorcycle.setActionCommand(Vehicle.TYPE_MOTORCYCLE);
         radioMotorcycle.addActionListener(vehicleTypeRadioListener);
+
+        JRadioButton radioTruck = new JRadioButton("Truck");
+        radioTruck.setActionCommand(Vehicle.TYPE_TRUCK);
         radioTruck.addActionListener(vehicleTypeRadioListener);
+
+        JRadioButton radioSuperCar = new JRadioButton("Supercar");
+        radioSuperCar.setActionCommand(Vehicle.TYPE_SUPERCAR);
         radioSuperCar.addActionListener(vehicleTypeRadioListener);
 
         ButtonGroup bg = new ButtonGroup();
@@ -215,6 +223,7 @@ public class RegisterPanel extends JPanel {
 
         //Content
         JButton registerButton = new JButton("Register vehicle");
+        registerButton.setActionCommand(Buttons.REGISTER_VEHICLE);
         registerButton.addActionListener(buttonListener);
 
         //Adding Content

@@ -5,7 +5,7 @@ import objects.VehicleOwner;
 
 public class Motorcycle extends Vehicle {
 
-    public Motorcycle(VehicleOwner owner, String type) {
-        super(owner, type);
+    public Motorcycle(VehicleOwner owner) {
+        super(owner, Vehicle.TYPE_MOTORCYCLE);
     }
 }

@@ -1,5 +1,6 @@
 package view;
 
+import data.constants.Buttons;
 import objects.Vehicle;
 
 import javax.swing.*;
@@ -128,9 +129,11 @@ public class VehicleEditPanel extends JPanel {
 
         //Content
         JButton changeButton = new JButton("Change");
-        JButton cancelButton = new JButton("Cancel");
-
+        changeButton.setActionCommand(Buttons.CHANGE);
         changeButton.addActionListener(buttonListener);
+
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setActionCommand(Buttons.CANCEL);
         cancelButton.addActionListener(buttonListener);
 
         //Adding Content

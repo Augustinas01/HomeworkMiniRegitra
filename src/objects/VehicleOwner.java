@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VehicleOwner {
+
+    public static final String TYPE_PERSON = "Person";
+    public static final String TYPE_COMPANY = "Company";
+
     int id;
     ArrayList<Vehicle> vehiclesList = new ArrayList<>();
     HashMap<String, Vehicle> vehiclesMap = new HashMap<>();
@@ -73,10 +77,10 @@ public class VehicleOwner {
                 String [] data = line.split(",");
                 if ("type".equals(data[0])) {
                     switch (data[1]) {
-                        case "car" -> vehicle = new Car(this, "car");
-                        case "supercar" -> vehicle = new Supercar(this, "supercar");
-                        case "truck" -> vehicle = new Truck(this, "truck");
-                        case "motorcycle" -> vehicle = new Motorcycle(this, "motorcycle");
+                        case "car" -> vehicle = new Car(this, Vehicle.TYPE_CAR);
+                        case "supercar" -> vehicle = new Supercar(this);
+                        case "truck" -> vehicle = new Truck(this);
+                        case "motorcycle" -> vehicle = new Motorcycle(this);
                     }
                 }
             }

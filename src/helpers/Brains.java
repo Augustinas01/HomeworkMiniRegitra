@@ -1,6 +1,8 @@
 package helpers;
 
 
+import data.constants.Buttons;
+import data.constants.Manufactor;
 import objects.Vehicle;
 import objects.VehicleOwner;
 import objects.owners.Company;
@@ -20,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Brains implements MainWindow.MainWindowListener {
@@ -48,10 +51,10 @@ public class Brains implements MainWindow.MainWindowListener {
         view.setProfileSelectorListener(e -> profileSelectorRadio(e));
 
         view.init();
-        this.vehicleType = "car";
-        this.userType = "person";
+        this.vehicleType = Vehicle.TYPE_CAR;
+        this.userType = VehicleOwner.TYPE_PERSON;
         view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
-        view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
+        view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.BMW)));
 
         view.showLoginPanel();
 
@@ -63,14 +66,14 @@ public class Brains implements MainWindow.MainWindowListener {
     @Override
     public void buttonsListener(ActionEvent e) {
         switch (e.getActionCommand()){
-            case "Main menu" -> view.showMainPanel();
-            case "Register" -> view.showRegisterPanel();
-            case "Register vehicle" -> registerVehicle();
-            case "My vehicles" -> showMyVehiclesPanel();
-            case "Search" -> view.showSearchPanel();
-            case "Log out" -> view.showLoginPanel();
-            case "Login" -> login();
-            case "Sign up" -> signUp();
+            case Buttons.MAIN_MENU -> view.showMainPanel();
+            case Buttons.REGISTER -> view.showRegisterPanel();
+            case Buttons.REGISTER_VEHICLE -> registerVehicle();
+            case Buttons.MY_VEHICLES -> showMyVehiclesPanel();
+            case Buttons.SEARCH -> view.showSearchPanel();
+            case Buttons.LOG_OUT -> view.showLoginPanel();
+            case Buttons.LOGIN -> login();
+            case Buttons.SIGN_UP -> signUp();
             default -> System.out.println(e.getActionCommand());
 
         }
@@ -80,26 +83,26 @@ public class Brains implements MainWindow.MainWindowListener {
     @Override
     public void vehicleTypeRadio(ActionEvent e) {
         System.out.println("Selected: " + e.getActionCommand());
-        switch (e.getActionCommand()){
-            case "Car" ->  {
-                this.vehicleType = "car";
+        switch (e.getActionCommand().toLowerCase(Locale.ROOT)){
+            case Vehicle.TYPE_CAR ->  {
+                this.vehicleType = Vehicle.TYPE_CAR;
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.BMW)));
             }
-            case "Motorcycle" -> {
-                this.vehicleType = "motorcycle";
+            case Vehicle.TYPE_MOTORCYCLE -> {
+                this.vehicleType = Vehicle.TYPE_MOTORCYCLE;
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.BMW)));
             }
-            case "Truck" -> {
-                this.vehicleType = "truck";
+            case Vehicle.TYPE_TRUCK -> {
+                this.vehicleType = Vehicle.TYPE_TRUCK;
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("MAN")));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.MAN)));
             }
-            case "Supercar" -> {
-                this.vehicleType = "supercar";
+            case Vehicle.TYPE_SUPERCAR -> {
+                this.vehicleType = Vehicle.TYPE_SUPERCAR;
                 view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
-                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Ferrari")));
+                view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.FERRARI)));
             }
         }
 
@@ -108,20 +111,20 @@ public class Brains implements MainWindow.MainWindowListener {
     @Override
     public void vehicleMakerList(ActionEvent e) {
         switch (Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString()){
-            case "BMW" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("BMW")));
-            case "Mercedes-Benz" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Mercedes-Benz")));
-            case "Porsche" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Porsche")));
-            case "Volkswagen" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Volkswagen")));
-            case "MV_Agusta" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("MV_Agusta")));
-            case "Suzuki" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Suzuki")));
-            case "Yamaha" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Yamaha")));
-            case "Ferrari" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Ferrari")));
-            case "Koenigsegg" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Koenigsegg")));
-            case "Lamborghini" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Lamborghini")));
-            case "McLaren" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("McLaren")));
-            case "MAN" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( "MAN")));
-            case "Scania" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( "Scania")));
-            case "Volvo" -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList("Volvo")));
+            case Manufactor.BMW -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.BMW)));
+            case Manufactor.MERCEDES_BENZ -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.MERCEDES_BENZ)));
+            case Manufactor.PORSCHE -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.PORSCHE)));
+            case Manufactor.VOLKSWAGEN -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.VOLKSWAGEN)));
+            case Manufactor.MV_AGUSTA -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.MV_AGUSTA)));
+            case Manufactor.SUZUKI -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.SUZUKI)));
+            case Manufactor.YAMAHA -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.YAMAHA)));
+            case Manufactor.FERRARI -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.FERRARI)));
+            case Manufactor.KOENIGSEGG -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.KOENIGSEGG)));
+            case Manufactor.LAMBORGHINI -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.LAMBORGHINI)));
+            case Manufactor.MCLAREN -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.MCLAREN)));
+            case Manufactor.MAN -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( Manufactor.MAN)));
+            case Manufactor.SCANIA -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList( Manufactor.SCANIA)));
+            case Manufactor.VOLVO -> view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.VOLVO)));
         }
     }
 
@@ -129,8 +132,8 @@ public class Brains implements MainWindow.MainWindowListener {
     public void profileSelectorRadio(ActionEvent e) {
         System.out.println("Selected: " + e.getActionCommand());
         switch (e.getActionCommand()){
-            case "Person" -> {
-                this.userType = "person";
+            case VehicleOwner.TYPE_PERSON -> {
+                this.userType = VehicleOwner.TYPE_PERSON;
                 if(view.getLoginCompanyLoginJP().isVisible()){
                     view.getLoginCompanyLoginJP().setVisible(false);
                     view.getLoginTextFieldsJP().remove(view.getLoginCompanyLoginJP());
@@ -138,8 +141,8 @@ public class Brains implements MainWindow.MainWindowListener {
                 view.getLoginTextFieldsJP().add(view.getLoginPersonLoginJP());
                 view.getLoginPersonLoginJP().setVisible(true);
             }
-            case "Company" -> {
-                this.userType = "company";
+            case VehicleOwner.TYPE_COMPANY -> {
+                this.userType = VehicleOwner.TYPE_COMPANY;
                 if(view.getLoginPersonLoginJP().isVisible()){
                     view.getLoginPersonLoginJP().setVisible(false);
                     view.getLoginTextFieldsJP().remove(view.getLoginPersonLoginJP());
@@ -174,10 +177,6 @@ public class Brains implements MainWindow.MainWindowListener {
         File file = new File("src/data/vehicleDB/" + this.vehicleType);
         return file.list();
     }
-//    private String[] getModelsList(String type){
-//        File file = new File("src/data/" + type);
-//        return file.list();
-//    }
 
 
     private  String[] getModelsList(String manufactor) {
@@ -199,10 +198,10 @@ public class Brains implements MainWindow.MainWindowListener {
     private void registerVehicle(){
         Vehicle vehicle = null;
         switch (this.vehicleType){
-            case "car"        -> vehicle = new Car(loggedUser, vehicleType);
-            case "motorcycle" -> vehicle = new Motorcycle(loggedUser, vehicleType);
-            case "truck"      -> vehicle = new Truck(loggedUser,vehicleType);
-            case "supercar"   -> vehicle = new Supercar(loggedUser,vehicleType);
+            case Vehicle.TYPE_CAR        -> vehicle = new Car(loggedUser,Vehicle.TYPE_CAR);
+            case Vehicle.TYPE_MOTORCYCLE -> vehicle = new Motorcycle(loggedUser);
+            case Vehicle.TYPE_TRUCK      -> vehicle = new Truck(loggedUser);
+            case Vehicle.TYPE_SUPERCAR   -> vehicle = new Supercar(loggedUser);
         }
         if(vehicle != null) {
             vehicle.setInfo(view.getRegInfoMap());
@@ -212,11 +211,10 @@ public class Brains implements MainWindow.MainWindowListener {
 
 
 //    private boolean vehicleRegistrationValidation(){
-//        String vehicleMake = Objects.requireNonNull(view.getVehicleMakersJCB().getSelectedItem()).toString();
-//        String vehicleModel = Objects.requireNonNull(view.getVehicleModelsJCB().getSelectedItem()).toString();
+//        view.getRegistrationYearJTF().getText()
 //        String vehicleFirstRegistrationYear = String.format(
 //                "%s-%s-%s",
-//                view.getRegistrationYearJTF().getText(),
+//                ,
 //                view.getRegistrationMonthJTF().getText(),
 //                view.getRegistrationDayJTF().getText());
 //        String vehicleHP = view.getVehicleHorsePowerJTF().getText();
@@ -255,8 +253,7 @@ public class Brains implements MainWindow.MainWindowListener {
         File usersDB = new File("src/data/users");
         if (!usersDB.exists())
         {
-            try
-            {
+            try{
                 usersDB.mkdirs();
                 usersDB.createNewFile();
             }
@@ -265,16 +262,14 @@ public class Brains implements MainWindow.MainWindowListener {
                 e.printStackTrace();
             }
         }
-        try
-        {
+        try{
             BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getLoginFirstNameJTF().getText(), true));
 
             buf.append(userInfo);
 
             buf.close();
         }
-        catch (IOException e)
-        {
+        catch (IOException e){
             e.printStackTrace();
         }
         JOptionPane.showMessageDialog(view,"User created succesfully!");
@@ -294,7 +289,7 @@ public class Brains implements MainWindow.MainWindowListener {
             if(confirmResult == JOptionPane.NO_OPTION){
                 return;
             }
-        } else {
+        }else{
             return;
         }
         String companyInfo = String.format("title,%s%n" +
@@ -304,8 +299,7 @@ public class Brains implements MainWindow.MainWindowListener {
         File usersDB = new File("src/data/users");
         if (!usersDB.exists())
         {
-            try
-            {
+            try{
                 usersDB.mkdirs();
                 usersDB.createNewFile();
             }
@@ -314,20 +308,17 @@ public class Brains implements MainWindow.MainWindowListener {
                 e.printStackTrace();
             }
         }
-        try
-        {
+        try{
             BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getCompanyIdJTF().getText(), true));
 
             buf.append(companyInfo);
 
             buf.close();
         }
-        catch (IOException e)
-        {
+        catch (IOException e){
             e.printStackTrace();
         }
         JOptionPane.showMessageDialog(view,"User created succesfully!");
-
     }
     //endregion
 
@@ -335,7 +326,7 @@ public class Brains implements MainWindow.MainWindowListener {
     public void login() {
         System.out.println("Login button pressed");
         switch (this.userType){
-            case "person" -> {
+            case VehicleOwner.TYPE_PERSON -> {
                 if(authorize(view.getLoginFirstNameJTF().getText())){
                     view.showMainPanel();
 
@@ -348,7 +339,7 @@ public class Brains implements MainWindow.MainWindowListener {
                     failedLogin();
                 }
             }
-            case "company" -> {
+            case VehicleOwner.TYPE_COMPANY -> {
                 if(authorize(view.getCompanyIdJTF().getText())){
                     view.showMainPanel();
 
@@ -367,7 +358,7 @@ public class Brains implements MainWindow.MainWindowListener {
 
     public void signUp() {
         System.out.println("Sign up button pressed");
-        if (this.userType.equals("person")){
+        if (this.userType.equals(VehicleOwner.TYPE_PERSON)){
             registerUser();
         }else{
             registerCompany();
@@ -387,13 +378,11 @@ public class Brains implements MainWindow.MainWindowListener {
     }
 
 
-
-
     private void failedLogin(){
-        if(this.userType.equals("person")){
+        if(this.userType.equals(VehicleOwner.TYPE_PERSON)){
             view.getLoginFirstNameJTF().setBorder(new LineBorder(Color.red));
         }
-        if(this.userType.equals("company")){
+        if(this.userType.equals(VehicleOwner.TYPE_COMPANY)){
             view.getCompanyIdJTF().setBorder(new LineBorder(Color.red));
         }
 
@@ -443,8 +432,8 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private JPanel vehicleGridEdit(String id){
         JPanel editCell = new JPanel(new GridLayout(1,2));
-        JButton delButton = new JButton("DEL");
-        JButton editButton = new JButton("EDIT");
+        JButton delButton = new JButton(Buttons.DEL);
+        JButton editButton = new JButton(Buttons.EDIT);
 
         delButton.setActionCommand(id);
         delButton.addActionListener(e -> delButtonListener(e));
@@ -470,8 +459,8 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private void editDialogListener(ActionEvent e1,ActionEvent e){
         switch (e1.getActionCommand()){
-            case "Cancel" -> editDialog.dispose();
-            case "Change" -> {
+            case Buttons.CANCEL -> editDialog.dispose();
+            case Buttons.CHANGE -> {
                 loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
                 loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
                 System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getBrand());

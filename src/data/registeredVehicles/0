@@ -1,11 +1,11 @@
-id, 0
+id,0
 owner,admin;admin
 type,car
-horsepower,200
+horsePower,200
 seats,5
 brand,Mercedes-Benz
 model,E-class
-numberplate,kms:103
+numberPlate,kms:103
 firstregistrationdate,1999-12-24
 price,1000
 taxrate,null

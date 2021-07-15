@@ -18,6 +18,11 @@ public class Vehicle {
     public static final String MODEL = "model";
     public static final String NUMBER_PLATE = "numberPlate";
     public static final String TYPE = "type";
+    public static final String[] ALL_TYPES = {"car","motorcycle","truck","supercar"};
+    public static final String TYPE_CAR = "car";
+    public static final String TYPE_MOTORCYCLE = "motorcycle";
+    public static final String TYPE_TRUCK = "truck";
+    public static final String TYPE_SUPERCAR = "supercar";
     public static final String REGISTRATION_DATE = "firstregistrationdate";
     public static final String PRICE = "price";
 
@@ -33,9 +38,6 @@ public class Vehicle {
         this.type = type;
         this.id = Integer.MIN_VALUE;
     }
-
-
-
 
     //region Getters
 
@@ -137,24 +139,13 @@ public class Vehicle {
     }
 
     public void save(){
-
         File vehiclesDB = new File("src/data/registeredVehicles");
-        if(this.id== Integer.MIN_VALUE) {
+        if(this.id== Integer.MIN_VALUE){
             this.id = Objects.requireNonNull(vehiclesDB.listFiles()).length - 1;
         }
-
-        String vehicleMake = this.brand;
-        String vehicleModel = this.model;
-        String vehicleFirstRegistrationYear = this.firstRegistrationDate.toString();
-
-        String vehicleHP = String.valueOf(this.horsePower);
-        String vehiclePrice = String.valueOf(this.price);
-        String vehicleSeatCount = String.valueOf(this.seats);
-        String vehicleNumberPlate = this.numberPlate;
-
         String vehicleInfo = String.format(
-                "id, %s%n" +
-                "owner,%s;%s%n" +
+                        "id,%s%n" +
+                        "owner,%s;%s%n" +
                         "type,%s%n" +
                         "horsepower,%s%n" +
                         "seats,%s%n" +
@@ -164,48 +155,54 @@ public class Vehicle {
                         "firstregistrationdate,%s%n" +
                         "price,%s%n" +
                         "taxrate,%s%n" ,
-                this.id,
-                owner.getOwnerInfo()[0],
-                owner.getOwnerInfo()[1],
-                this.type,
-                vehicleHP,
-                vehicleSeatCount,
-                vehicleMake,
-                vehicleModel,
-                vehicleNumberPlate,
-                vehicleFirstRegistrationYear,
-                vehiclePrice,
-                null);
+                this.id, owner.getOwnerInfo()[0], owner.getOwnerInfo()[1], this.type,
+                this.horsePower, this.seats, this.brand, this.model, this.numberPlate, this.firstRegistrationDate, this.price, this.taxRate);
 
-
-
-
-        if (!vehiclesDB.exists())
-        {
-            try
-            {
-                vehiclesDB.mkdirs();
-                vehiclesDB.createNewFile();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+        if (!vehiclesDB.exists()){
+            vehiclesDB.mkdirs();
         }
-        try
-        {
+        try{
             BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB + "/" + this.id, false));
-
             buf.append(vehicleInfo);
-
             buf.close();
         }
-        catch (IOException e)
-        {
+        catch (IOException e){
             e.printStackTrace();
         }
         owner.addVehicleToMap(this);
         owner.save();
+        saveToCSV();
+    }
+
+    private void saveToCSV(){
+
+        File vehiclesDB = new File("src/data/registeredVehicles/csv");
+
+        String vehicleInfo = String.format("%s,%s,%s,%s;%s,%s," +
+                                            "%s,%s,%s,%s,%s,%s%n",
+                this.id,this.brand,this.model,owner.getOwnerInfo()[0],owner.getOwnerInfo()[1],this.type,
+                this.numberPlate,this.firstRegistrationDate.toString(),this.horsePower,this.seats,this.price,this.taxRate);
+
+        if (!vehiclesDB.exists()){
+            try{
+                vehiclesDB.mkdirs();
+                for (String type:ALL_TYPES) {
+                    BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB + "/" + type + "DB.csv", true));
+                    buf.append("id,brand,model,owner,type,numberplate,firstregistrationdate,horsepower,seats,price,taxrate\n");
+                    buf.close();
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        try{
+            BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB + "/" + this.type + "DB.csv", true));
+            buf.append(vehicleInfo);
+            buf.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 }

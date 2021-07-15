@@ -28,8 +28,6 @@ public class MainWindow extends JFrame {
         this.setTitle(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
-//        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-//        this.setLocation(dim.width/3, dim.height/3);
         this.setSize(850,600);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -37,7 +35,6 @@ public class MainWindow extends JFrame {
     }
 
     //region Setters
-
     public void setButtonsListener(ActionListener buttonsListener) {
         this.buttonsListener = buttonsListener;
     }
@@ -50,7 +47,6 @@ public class MainWindow extends JFrame {
     public void setProfileSelectorListener(ActionListener profileSelectorListener) {
         this.profileSelectorListener = profileSelectorListener;
     }
-
     public void setMyVehicles(VehiclesPanel myVehicles) {
         this.myVehicles = myVehicles;
         this.myVehicles.setVisible(false);
@@ -58,7 +54,6 @@ public class MainWindow extends JFrame {
     //endregion
 
     //region Getters
-
     public JComboBox<String> getVehicleMakersJCB(){
         return this.register.getVehicleMakersList();
     }
@@ -116,11 +111,9 @@ public class MainWindow extends JFrame {
     public JPanel getMyVehiclesBody(){
         return this.myVehicles.getBodyPanel();
     }
-
     public RegisterPanel getRegister() {
         return register;
     }
-
     public ActionListener getButtonsListener() {
         return buttonsListener;
     }

@@ -1,5 +1,7 @@
 package view;
 
+import data.constants.Buttons;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -27,16 +29,17 @@ public class VehiclesPanel extends JPanel {
 
         //Content
         JLabel title = new JLabel("Vehicle search");
-        JButton goSearch = new JButton("Register");
-        JButton goBack = new JButton("Main menu");
-
-        //Content Settings
-        goBack.setHorizontalAlignment(SwingConstants.LEFT);
-        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        goBack.addActionListener(buttonListener);
+        JButton goSearch = new JButton("Register");
+        goSearch.setHorizontalAlignment(SwingConstants.RIGHT);
+        goSearch.setActionCommand(Buttons.REGISTER);
         goSearch.addActionListener(buttonListener);
+
+        JButton goBack = new JButton("Main menu");
+        goBack.setHorizontalAlignment(SwingConstants.LEFT);
+        goBack.setActionCommand(Buttons.MAIN_MENU);
+        goBack.addActionListener(buttonListener);
 
         //Addding Content
         header.add(goBack);
@@ -53,15 +56,12 @@ public class VehiclesPanel extends JPanel {
         bodyPanel = new JPanel(new BorderLayout());
         JPanel header = new JPanel(new GridLayout(0,7));
 
-
         String[] gridHeader = {"Brand","Model","HP","Seats","Number plate","Price","Actions"};
         for(String title:gridHeader){
             JLabel cell = new JLabel(title);
             cell.setHorizontalAlignment(SwingConstants.CENTER);
             header.add(cell);
         }
-
-
 
         bodyPanel.add(BorderLayout.NORTH,header);
 

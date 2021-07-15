@@ -1,5 +1,8 @@
 package view;
 
+import data.constants.Buttons;
+import objects.VehicleOwner;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -57,8 +60,8 @@ public class LoginPanel extends JPanel {
 
 
         JPanel loginSignUpButtons = new JPanel();
-        JButton login = new JButton("Login");
-        JButton signUp = new JButton("Sign up");
+        JButton login = new JButton(Buttons.LOGIN);
+        JButton signUp = new JButton(Buttons.SIGN_UP);
         loginSignUpButtons.add(login);
         loginSignUpButtons.add(signUp);
 
@@ -67,6 +70,8 @@ public class LoginPanel extends JPanel {
         JPanel profileSelector = new JPanel();
         JRadioButton asPerson = new JRadioButton("Person");
         JRadioButton asCompany = new JRadioButton("Company");
+        asPerson.setActionCommand(VehicleOwner.TYPE_PERSON);
+        asCompany.setActionCommand(VehicleOwner.TYPE_COMPANY);
         asPerson.setSelected(true);
 
         ButtonGroup bg = new ButtonGroup();

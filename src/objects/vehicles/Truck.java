@@ -5,7 +5,7 @@ import objects.VehicleOwner;
 
 public class Truck extends Vehicle {
 
-    public Truck(VehicleOwner owner, String type) {
-        super(owner, type);
+    public Truck(VehicleOwner owner) {
+        super(owner, Vehicle.TYPE_TRUCK);
     }
 }
