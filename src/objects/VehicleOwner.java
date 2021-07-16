@@ -20,9 +20,10 @@ public class VehicleOwner {
     int id;
     ArrayList<Vehicle> vehiclesList = new ArrayList<>();
     HashMap<String, Vehicle> vehiclesMap = new HashMap<>();
-    String registrationNumber;
+    String registrationNumber,type;
 
-    public VehicleOwner(){
+    public VehicleOwner(String type){
+        this.type = type;
 
     }
 
@@ -32,6 +33,9 @@ public class VehicleOwner {
 
     public HashMap<String, Vehicle> getVehiclesMap() {
         return vehiclesMap;
+    }
+    public String getType(){
+        return this.type;
     }
 
 

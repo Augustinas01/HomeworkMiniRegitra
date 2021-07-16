@@ -1,6 +1,7 @@
 package view;
 
 import data.constants.Buttons;
+import data.constants.Titles;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,17 +55,16 @@ public class VehiclesPanel extends JPanel {
 
     private JPanel body(){
         bodyPanel = new JPanel(new BorderLayout());
-        String[] gridHeader = {"Brand","Model","HP","Seats","Number plate","Price","Actions"};
 
-        JPanel header = new JPanel(new GridLayout(0, gridHeader.length));
-
-        for(String title:gridHeader){
-            JLabel cell = new JLabel(title);
-            cell.setHorizontalAlignment(SwingConstants.CENTER);
-            header.add(cell);
-        }
-
-        bodyPanel.add(BorderLayout.NORTH,header);
+//        JPanel header = new JPanel(new GridLayout(0, Titles.MY_VEHICLES_GRID_TITLE.length));
+//
+//        for(String title:Titles.MY_VEHICLES_GRID_TITLE){
+//            JLabel cell = new JLabel(title);
+//            cell.setHorizontalAlignment(SwingConstants.CENTER);
+//            header.add(cell);
+//        }
+//
+//        bodyPanel.add(BorderLayout.NORTH,header);
 
         return  bodyPanel;
     }

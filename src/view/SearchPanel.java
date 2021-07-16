@@ -1,20 +1,47 @@
 package view;
 
 import data.constants.Buttons;
+import data.constants.SearchOptions;
+import data.constants.Titles;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SearchPanel extends JPanel {
 
-    JPanel bodyPanel;
+    JPanel searchResultBody;
+    JComboBox<String> databaseSelection;
 
-    public SearchPanel(ActionListener buttonListener){
+    JTextField numPlate,brand,owner;
+
+    public SearchPanel(ActionListener buttonListener, ActionListener databaseSelectionListener){
         this.setLayout(new BorderLayout());
 
         this.add(BorderLayout.NORTH,header(buttonListener));
+        this.add(BorderLayout.CENTER,body(buttonListener, databaseSelectionListener));
 
+    }
+
+    public JPanel getSearchResultBody() {
+        return searchResultBody;
+    }
+    public JComboBox<String> getDatabaseSelection() {
+        return databaseSelection;
+    }
+    public JTextField getNumPlate() {
+        return numPlate;
+    }
+    public JTextField getBrand() {
+        return brand;
+    }
+    public JTextField getOwner() {
+        return owner;
     }
 
     //region Header
@@ -46,26 +73,63 @@ public class SearchPanel extends JPanel {
     //endregion
 
     //region Body
+    private JPanel body(ActionListener buttonListener, ActionListener databaseSelectionListener){
 
-    private JPanel body(){
-        bodyPanel = new JPanel(new BorderLayout());
-        String[] gridHeader = {"Brand","Model","HP","Seats","Number plate","Price","Actions"};
+        JPanel body = new JPanel(new BorderLayout());
+        body.add(BorderLayout.NORTH,searchSection(buttonListener, databaseSelectionListener ));
 
-        JPanel header = new JPanel(new GridLayout(0, gridHeader.length));
+        searchResultBody = new JPanel(new BorderLayout());
 
-        for(String title:gridHeader){
-            JLabel cell = new JLabel(title);
-            cell.setHorizontalAlignment(SwingConstants.CENTER);
-            header.add(cell);
-        }
+        body.add(BorderLayout.CENTER,searchResultBody);
 
-        bodyPanel.add(BorderLayout.NORTH,header);
-
-        return  bodyPanel;
+        return body;
     }
-
-
     //endregion
+
+    private JPanel searchSection(ActionListener listener, ActionListener databaseSelectionListener){
+        JPanel searchSection = new JPanel(new FlowLayout(FlowLayout.CENTER,50,10));
+        searchSection.setBackground(Color.lightGray);
+        GridLayout optionsLayout = new GridLayout(2,4);
+        optionsLayout.setHgap(20);
+        JPanel searchOptions = new JPanel(optionsLayout);
+        searchOptions.setOpaque(false);
+        numPlate = new JTextField(SearchOptions.BY_NUMBER_PLATE, 10);
+        numPlate.setBorder(new LineBorder(Color.GRAY));
+        brand = new JTextField(SearchOptions.BY_BRAND, 10);
+        brand.setBorder(new LineBorder(Color.GRAY));
+        owner = new JTextField(SearchOptions.BY_OWNER, 10);
+        owner.setBorder(new LineBorder(Color.GRAY));
+        databaseSelection = new JComboBox<>();
+        databaseSelection.setModel(new DefaultComboBoxModel<>(SearchOptions.DATABASE_SELECTION));
+        databaseSelection.addActionListener(databaseSelectionListener);
+
+        JLabel numPlateLabel = new JLabel(SearchOptions.BY_NUMBER_PLATE);
+        numPlateLabel.setHorizontalAlignment(JLabel.CENTER);
+        JLabel brandLabel = new JLabel(SearchOptions.BY_BRAND);
+        brandLabel.setHorizontalAlignment(JLabel.CENTER);
+        JLabel ownerLabel = new JLabel(SearchOptions.BY_OWNER);
+        ownerLabel.setHorizontalAlignment(JLabel.CENTER);
+        JLabel dbLabel = new JLabel("Database");
+        dbLabel.setHorizontalAlignment(JLabel.CENTER);
+
+        JButton searchVehicle = new JButton("Search");
+        searchVehicle.setActionCommand(Buttons.SEARCH_VEHICLE);
+        searchVehicle.addActionListener(listener);
+
+        searchOptions.add(numPlateLabel);
+        searchOptions.add(ownerLabel);
+        searchOptions.add(brandLabel);
+        searchOptions.add(dbLabel);
+        searchOptions.add(numPlate);
+        searchOptions.add(owner);
+        searchOptions.add(brand);
+        searchOptions.add(databaseSelection);
+
+        searchSection.add(searchOptions);
+        searchSection.add(searchVehicle);
+
+        return searchSection;
+    }
 
 
 

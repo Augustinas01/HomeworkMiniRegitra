@@ -11,6 +11,7 @@ public class Person extends VehicleOwner {
 
 
     public Person (String firstName){
+        super(VehicleOwner.TYPE_PERSON);
         fillData(firstName);
     }
 

@@ -11,6 +11,7 @@ public class Company extends VehicleOwner {
     double taxDeduction;
 
     public Company(String companyID){
+        super(VehicleOwner.TYPE_COMPANY);
         this.companyID = companyID;
         fillData(companyID);
     }

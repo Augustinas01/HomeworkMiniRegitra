@@ -1,5 +1,7 @@
 package view;
 
+import data.constants.Titles;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,7 @@ public class MainWindow extends JFrame {
     private SearchPanel search;
     private LoginPanel login;
     private VehiclesPanel myVehicles;
-    ActionListener vehicleTypeRadio, vehicleMakerListListener, profileSelectorListener, buttonsListener;
+    ActionListener vehicleTypeRadio, vehicleMakerListListener, profileSelectorListener, buttonsListener, searchDBListener;
 
 
     public interface MainWindowListener {
@@ -21,11 +23,12 @@ public class MainWindow extends JFrame {
         void vehicleTypeRadio(ActionEvent e);
         void vehicleMakerList(ActionEvent e);
         void profileSelectorRadio(ActionEvent e);
+        void searchDBListener(ActionEvent e);
     }
 
 
-    public MainWindow(String title){
-        this.setTitle(title);
+    public MainWindow(){
+        this.setTitle(Titles.APP_TITLE);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.setSize(850,600);
@@ -50,6 +53,10 @@ public class MainWindow extends JFrame {
     public void setMyVehicles(VehiclesPanel myVehicles) {
         this.myVehicles = myVehicles;
         this.myVehicles.setVisible(false);
+    }
+    public void setSearchPanel(SearchPanel searchPanel){
+        this.search = searchPanel;
+        this.search.setVisible(false);
     }
     //endregion
 
@@ -111,19 +118,36 @@ public class MainWindow extends JFrame {
     public JPanel getMyVehiclesBody(){
         return this.myVehicles.getBodyPanel();
     }
+    public SearchPanel getSearchPanel(){
+        return this.search;
+    }
+    public JTextField getSearchNumberPlateJTF(){
+        return this.search.getNumPlate();
+    }
+    public JTextField getSearchOwnerJTF(){
+        return this.search.getOwner();
+    }
+    public JTextField getSearchBrandJTF(){
+        return this.search.getBrand();
+    }
+    public JPanel getSearchBody(){
+        return this.search.getSearchResultBody();
+    }
     public RegisterPanel getRegister() {
         return register;
     }
     public ActionListener getButtonsListener() {
         return buttonsListener;
     }
+    public JComboBox getSearchDatabaseJCB() { return this.search.getDatabaseSelection();}
     //endregion
 
     public void init(){
         this.main = new MainMenuPanel(this.buttonsListener);
         this.main.setVisible(false);
 
-        this.search = new SearchPanel(this.buttonsListener);
+        this.search = new SearchPanel(this.buttonsListener,
+                                      this.searchDBListener);
         this.search.setVisible(false);
 
         this.register = new RegisterPanel(this.buttonsListener,

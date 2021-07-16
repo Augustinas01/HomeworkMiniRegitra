@@ -91,6 +91,8 @@ public class Vehicle {
         info.put(SEATS, seats);
         info.put(NUMBER_PLATE, numberPlate);
         info.put(PRICE, price);
+        info.put(TYPE,type);
+        info.put(OWNER,String.format("%s %s",owner.getOwnerInfo()[0],owner.getOwnerInfo()[1]));
         info.put(ID, id);
         info.put(REGISTRATION_DATE, firstRegistrationDate);
         return info;
@@ -154,11 +156,11 @@ public class Vehicle {
                         "id,%s%n" +
                         "owner,%s;%s%n" +
                         "type,%s%n" +
-                        "horsepower,%s%n" +
+                        "horsePower,%s%n" +
                         "seats,%s%n" +
                         "brand,%s%n" +
                         "model,%s%n" +
-                        "numberplate,%s%n" +
+                        "numberPlate,%s%n" +
                         "firstregistrationdate,%s%n" +
                         "price,%s%n" +
                         "taxrate,%s%n" ,
@@ -185,10 +187,10 @@ public class Vehicle {
 
         File vehiclesDB = new File("src/data/registeredVehicles/csv");
 
-        String vehicleInfo = String.format("%s,%s,%s,%s;%s,%s," +
-                                            "%s,%s,%s,%s,%s,%s%n",
+        String vehicleInfo = String.format("%s,%s,%s,%s %s,%s," +
+                                            "%s,%s,%s,%s,%s,%s,%s%n",
                 this.id,this.brand,this.model,owner.getOwnerInfo()[0],owner.getOwnerInfo()[1],this.type,
-                this.numberPlate,this.firstRegistrationDate.toString(),this.horsePower,this.seats,this.price,this.taxRate);
+                this.numberPlate,this.firstRegistrationDate.toString(),this.horsePower,this.seats,this.price,this.taxRate,owner.getType());
 
         if (!vehiclesDB.exists()){
             try{

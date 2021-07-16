@@ -3,6 +3,8 @@ package helpers;
 
 import data.constants.Buttons;
 import data.constants.Manufactor;
+import data.constants.SearchOptions;
+import data.constants.Titles;
 import objects.Vehicle;
 import objects.VehicleOwner;
 import objects.owners.Company;
@@ -12,6 +14,7 @@ import objects.vehicles.Motorcycle;
 import objects.vehicles.Supercar;
 import objects.vehicles.Truck;
 import view.MainWindow;
+import view.SearchPanel;
 import view.VehicleEditPanel;
 import view.VehiclesPanel;
 
@@ -21,15 +24,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Objects;
 
 public class Brains implements MainWindow.MainWindowListener {
 
+
+
+
     private final MainWindow view;
 
-    private String vehicleType,userType;
+    private String vehicleType,userType,databaseSelection;
 
     private VehicleOwner loggedUser;
 
@@ -39,10 +46,13 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private JDialog editDialog;
 
+    private DataManager dataManager;
+
 
 
     public Brains(MainWindow view){
         this.view = view;
+        this.dataManager = new DataManager();
 
         //Set listeners
         view.setButtonsListener(e -> buttonsListener(e));
@@ -70,10 +80,11 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.REGISTER          -> view.showRegisterPanel();
             case Buttons.REGISTER_VEHICLE  -> registerVehicle();
             case Buttons.MY_VEHICLES       -> showMyVehiclesPanel();
-            case Buttons.SEARCH            -> view.showSearchPanel();
+            case Buttons.SEARCH            -> showSearchPanel(dataManager.getAllVehiclesDB());
             case Buttons.LOG_OUT           -> view.showLoginPanel();
             case Buttons.LOGIN             -> login();
             case Buttons.SIGN_UP           -> signUp();
+            case Buttons.SEARCH_VEHICLE    -> searchVehicle();
             default                        -> System.out.println(e.getActionCommand());
 
         }
@@ -154,6 +165,21 @@ public class Brains implements MainWindow.MainWindowListener {
         }
 
     }
+
+    @Override
+    public void searchDBListener(ActionEvent e) {
+
+        switch (Objects.requireNonNull(view.getSearchDatabaseJCB().getSelectedItem()).toString()){
+            case SearchOptions.DB_ALL_VEHICLES -> databaseSelection = SearchOptions.DB_ALL_VEHICLES;
+            case SearchOptions.DB_CARS -> databaseSelection = SearchOptions.DB_CARS;
+            case SearchOptions.DB_MOTORCYCLE -> databaseSelection = SearchOptions.DB_MOTORCYCLE;
+            case SearchOptions.DB_TRUCK -> databaseSelection = SearchOptions.DB_TRUCK;
+            case SearchOptions.DB_SUPERCAR -> databaseSelection = SearchOptions.DB_SUPERCAR;
+        }
+
+
+    }
+
     private void delButtonListener(ActionEvent e) {
         Vehicle selectedVehicle = loggedUser.getVehiclesMap().get(e.getActionCommand());
 
@@ -168,6 +194,31 @@ public class Brains implements MainWindow.MainWindowListener {
             loggedUser.save();
             showMyVehiclesPanel();
 
+        }
+    }
+    private void editButtonListener(ActionEvent e){
+        editDialog = new JDialog();
+        vehicleEditPanel = new VehicleEditPanel(loggedUser.getVehiclesMap().get(e.getActionCommand()).getInfo(),e1 -> editDialogListener(e1,e));
+        editDialog.setTitle("Editing - " +loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
+        editDialog.setLayout(new FlowLayout());
+        editDialog.add(vehicleEditPanel);
+        editDialog.pack();
+        editDialog.setLocationRelativeTo(view);
+        editDialog.setVisible(true);
+    }
+
+    private void editDialogListener(ActionEvent e1,ActionEvent e){
+        switch (e1.getActionCommand()){
+            case Buttons.CANCEL -> editDialog.dispose();
+            case Buttons.CHANGE -> {
+                loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
+                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
+                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getBrand());
+                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
+                loggedUser.save();
+                showMyVehiclesPanel();
+                editDialog.dispose();
+            }
         }
     }
     //endregion
@@ -205,6 +256,7 @@ public class Brains implements MainWindow.MainWindowListener {
         }
         if(vehicle != null) {
             vehicle.setInfo(view.getRegInfoMap());
+            dataManager.addVehicle(vehicle,this.vehicleType);
             vehicle.save();
         }
     }
@@ -322,7 +374,7 @@ public class Brains implements MainWindow.MainWindowListener {
     }
     //endregion
 
-
+    //region Logging-in
     public void login() {
         System.out.println("Login button pressed");
         switch (this.userType){
@@ -387,44 +439,62 @@ public class Brains implements MainWindow.MainWindowListener {
         }
 
     }
+    //endregion
 
-    private void showVehiclesPanel(){
-        if(view.getMyVehicles().isVisible()){
-            view.remove(view.getMyVehicles());
+    private void showSearchPanel(HashMap<Integer, Vehicle> vehicles){
+        //region Visibility check
+        if(view.getSearchPanel().isVisible()){
+            view.remove(view.getSearchPanel());
         }
-        view.setMyVehicles(new VehiclesPanel(view.getButtonsListener()));
+        view.setSearchPanel(new SearchPanel(view.getButtonsListener(),this::searchDBListener));
         JPanel vehiclesGridBody = new JPanel(new FlowLayout());
         if(vehiclesGrid != null){
-            view.getMyVehiclesBody().remove(vehiclesGridBody);
+            view.getSearchBody().remove(vehiclesGridBody);
             vehiclesGridBody.remove(vehiclesGrid);
         }
-
-        vehiclesGrid = new JPanel(new GridLayout(0,7));
-
-        loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
+        //endregion
 
 
+        GridLayout resultsLayout = new GridLayout(0,Titles.ALL_VEHICLES_GRID_TITLE.length);
+        vehiclesGrid = new JPanel(resultsLayout);
 
-            LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
 
-            vehicleInfo.forEach((info,stat) -> {
-                switch (info){
-                    case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.SEATS, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
-                        JLabel cell = new JLabel(stat.toString());
-                        cell.setHorizontalAlignment(SwingConstants.CENTER);
-                        cell.setBorder(new LineBorder(Color.BLACK));
-                        vehiclesGrid.add(cell);
+        for(String title:Titles.ALL_VEHICLES_GRID_TITLE){
+            JLabel cell = new JLabel(title);
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+            cell.setBorder(new LineBorder(Color.BLACK));
+            vehiclesGrid.add(cell);
+        }
 
+        if(vehicles != null) {
+
+            vehicles.forEach((vehicleId, vehicle) -> {
+
+                LinkedHashMap<String, Object> vehicleInfo = vehicle.getInfo();
+
+                vehicleInfo.forEach((info, stat) -> {
+                    switch (info) {
+                        case Vehicle.BRAND, Vehicle.MODEL, Vehicle.NUMBER_PLATE, Vehicle.PRICE, Vehicle.TYPE, Vehicle.OWNER -> {
+                            JLabel cell = new JLabel(stat.toString());
+                            cell.setHorizontalAlignment(SwingConstants.CENTER);
+                            cell.setBorder(new LineBorder(Color.BLACK));
+                            vehiclesGrid.add(cell);
+                        }
+                        case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
                     }
-                    case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
+                });
 
-                }
             });
-        });
-        vehiclesGridBody.add(vehiclesGrid);
+            vehiclesGridBody.add(vehiclesGrid);
+        }else{
+            vehiclesGridBody.add(new JLabel("There's no vehicles :("));
+        }
 
-        view.getMyVehiclesBody().add(vehiclesGridBody);
-        view.showMyVehiclesPanel();
+
+
+
+        view.getSearchBody().add(vehiclesGridBody);
+        view.showSearchPanel();
     }
 
     private void showMyVehiclesPanel(){
@@ -438,11 +508,16 @@ public class Brains implements MainWindow.MainWindowListener {
                 vehiclesGridBody.remove(vehiclesGrid);
         }
 
-        vehiclesGrid = new JPanel(new GridLayout(0,7));
+        vehiclesGrid = new JPanel(new GridLayout(0, Titles.MY_VEHICLES_GRID_TITLE.length));
+
+        for(String title:Titles.MY_VEHICLES_GRID_TITLE){
+            JLabel cell = new JLabel(title);
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+            cell.setBackground(Color.lightGray);
+            vehiclesGrid.add(cell);
+        }
 
         loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
-
-
 
             LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
 
@@ -482,30 +557,29 @@ public class Brains implements MainWindow.MainWindowListener {
         return editCell;
     }
 
-    private void editButtonListener(ActionEvent e){
-        editDialog = new JDialog();
-        vehicleEditPanel = new VehicleEditPanel(loggedUser.getVehiclesMap().get(e.getActionCommand()).getInfo(),e1 -> editDialogListener(e1,e));
-        editDialog.setTitle("Editing - " +loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
-        editDialog.setLayout(new FlowLayout());
-        editDialog.add(vehicleEditPanel);
-        editDialog.pack();
-        editDialog.setLocationRelativeTo(view);
-        editDialog.setVisible(true);
-    }
-
-    private void editDialogListener(ActionEvent e1,ActionEvent e){
-        switch (e1.getActionCommand()){
-            case Buttons.CANCEL -> editDialog.dispose();
-            case Buttons.CHANGE -> {
-                loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
-                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
-                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getBrand());
-                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
-                loggedUser.save();
-                showMyVehiclesPanel();
-                editDialog.dispose();
-            }
+    private void searchVehicle(){
+        if(!view.getSearchNumberPlateJTF().getText().equals(SearchOptions.BY_NUMBER_PLATE)){
+            showSearchPanel(dataManager.getSearchResults(view.getSearchNumberPlateJTF().getText(), databaseSelection,Vehicle.NUMBER_PLATE));
+        }
+        if (!view.getSearchBrandJTF().getText().equals(SearchOptions.BY_BRAND)){
+            showSearchPanel(dataManager.getSearchResults(view.getSearchBrandJTF().getText(),databaseSelection,Vehicle.BRAND));
+        }
+        if(!view.getSearchOwnerJTF().getText().equals(SearchOptions.BY_OWNER)){
+            showSearchPanel(dataManager.getSearchResults(view.getSearchOwnerJTF().getText(),databaseSelection,Vehicle.OWNER));
         }
     }
+//    private boolean searchResultSwitch(LinkedHashMap<String,Object> vehicleInfo, String resultCriteria, String searchCriteria){
+//        switch (resultCriteria){
+//            case ALL: return true;
+//            case BY_NUMBER_PLATE:
+//                if(vehicleInfo.get(Vehicle.NUMBER_PLATE).equals(searchCriteria)){
+//                    return true;
+//                }
+//            default: return false;
+//        }
+//
+//    }
+
+
 
 }
