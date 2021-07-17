@@ -63,6 +63,7 @@ public class Brains implements MainWindow.MainWindowListener {
         view.init();
         this.vehicleType = Vehicle.TYPE_CAR;
         this.userType = VehicleOwner.TYPE_PERSON;
+        databaseSelection = SearchOptions.DB_ALL_VEHICLES;
         view.getVehicleMakersJCB().setModel(new DefaultComboBoxModel<>(getManufactorsList()));
         view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.BMW)));
 
@@ -80,11 +81,11 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.REGISTER          -> view.showRegisterPanel();
             case Buttons.REGISTER_VEHICLE  -> registerVehicle();
             case Buttons.MY_VEHICLES       -> showMyVehiclesPanel();
-            case Buttons.SEARCH            -> showSearchPanel(dataManager.getAllVehiclesDB());
+            case Buttons.SEARCH            -> showSearchPanel(false);
             case Buttons.LOG_OUT           -> view.showLoginPanel();
             case Buttons.LOGIN             -> login();
             case Buttons.SIGN_UP           -> signUp();
-            case Buttons.SEARCH_VEHICLE    -> searchVehicle();
+            case Buttons.SEARCH_VEHICLE    -> showSearchPanel(true);
             default                        -> System.out.println(e.getActionCommand());
 
         }
@@ -212,10 +213,10 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.CANCEL -> editDialog.dispose();
             case Buttons.CHANGE -> {
                 loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
-                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
-                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getBrand());
-                System.out.println(loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
+                dataManager.save(loggedUser.getVehiclesMap().get(e.getActionCommand()));
+//                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
                 loggedUser.save();
+//                dataManager.addVehicle(loggedUser.getVehiclesMap().get(e.getActionCommand()));
                 showMyVehiclesPanel();
                 editDialog.dispose();
             }
@@ -256,8 +257,9 @@ public class Brains implements MainWindow.MainWindowListener {
         }
         if(vehicle != null) {
             vehicle.setInfo(view.getRegInfoMap());
-            dataManager.addVehicle(vehicle,this.vehicleType);
-            vehicle.save();
+//            dataManager.addVehicle(vehicle);
+            dataManager.save(vehicle);
+//            vehicle.save();
         }
     }
 
@@ -441,7 +443,24 @@ public class Brains implements MainWindow.MainWindowListener {
     }
     //endregion
 
-    private void showSearchPanel(HashMap<Integer, Vehicle> vehicles){
+    private void showSearchPanel(boolean search){
+
+        HashMap<Integer,Vehicle> vehicles = null;
+
+        if(search){
+            if(!view.getSearchNumberPlateJTF().getText().equals(SearchOptions.BY_NUMBER_PLATE)){
+                vehicles = dataManager.getSearchResults(view.getSearchNumberPlateJTF().getText(), databaseSelection,Vehicle.NUMBER_PLATE);
+            }
+            if (!view.getSearchBrandJTF().getText().equals(SearchOptions.BY_BRAND)){
+                vehicles = dataManager.getSearchResults(view.getSearchBrandJTF().getText(),databaseSelection,Vehicle.BRAND);
+            }
+            if(!view.getSearchOwnerJTF().getText().equals(SearchOptions.BY_OWNER)){
+                vehicles = dataManager.getSearchResults(view.getSearchOwnerJTF().getText(),databaseSelection,Vehicle.OWNER);
+            }
+        }else{
+            vehicles = dataManager.getAllVehiclesDB();
+        }
+
         //region Visibility check
         if(view.getSearchPanel().isVisible()){
             view.remove(view.getSearchPanel());
@@ -455,6 +474,7 @@ public class Brains implements MainWindow.MainWindowListener {
         //endregion
 
 
+
         GridLayout resultsLayout = new GridLayout(0,Titles.ALL_VEHICLES_GRID_TITLE.length);
         vehiclesGrid = new JPanel(resultsLayout);
 
@@ -465,6 +485,7 @@ public class Brains implements MainWindow.MainWindowListener {
             cell.setBorder(new LineBorder(Color.BLACK));
             vehiclesGrid.add(cell);
         }
+
 
         if(vehicles != null) {
 
@@ -557,17 +578,17 @@ public class Brains implements MainWindow.MainWindowListener {
         return editCell;
     }
 
-    private void searchVehicle(){
-        if(!view.getSearchNumberPlateJTF().getText().equals(SearchOptions.BY_NUMBER_PLATE)){
-            showSearchPanel(dataManager.getSearchResults(view.getSearchNumberPlateJTF().getText(), databaseSelection,Vehicle.NUMBER_PLATE));
-        }
-        if (!view.getSearchBrandJTF().getText().equals(SearchOptions.BY_BRAND)){
-            showSearchPanel(dataManager.getSearchResults(view.getSearchBrandJTF().getText(),databaseSelection,Vehicle.BRAND));
-        }
-        if(!view.getSearchOwnerJTF().getText().equals(SearchOptions.BY_OWNER)){
-            showSearchPanel(dataManager.getSearchResults(view.getSearchOwnerJTF().getText(),databaseSelection,Vehicle.OWNER));
-        }
-    }
+//    private void searchVehicle(){
+//        if(!view.getSearchNumberPlateJTF().getText().equals(SearchOptions.BY_NUMBER_PLATE)){
+//            showSearchPanel(dataManager.getSearchResults(view.getSearchNumberPlateJTF().getText(), databaseSelection,Vehicle.NUMBER_PLATE));
+//        }
+//        if (!view.getSearchBrandJTF().getText().equals(SearchOptions.BY_BRAND)){
+//            showSearchPanel(dataManager.getSearchResults(view.getSearchBrandJTF().getText(),databaseSelection,Vehicle.BRAND));
+//        }
+//        if(!view.getSearchOwnerJTF().getText().equals(SearchOptions.BY_OWNER)){
+//            showSearchPanel(dataManager.getSearchResults(view.getSearchOwnerJTF().getText(),databaseSelection,Vehicle.OWNER));
+//        }
+//    }
 //    private boolean searchResultSwitch(LinkedHashMap<String,Object> vehicleInfo, String resultCriteria, String searchCriteria){
 //        switch (resultCriteria){
 //            case ALL: return true;

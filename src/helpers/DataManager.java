@@ -10,18 +10,17 @@ import objects.vehicles.Motorcycle;
 import objects.vehicles.Supercar;
 import objects.vehicles.Truck;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class DataManager {
-    public static final String OWNER_TYPE = "ownertype";
 
     private HashMap<Integer, Vehicle> carDB, motorcycleDB,truckDB,superCarDB;
     private HashMap<Integer, Vehicle> allVehiclesDB = new HashMap<>();
+    private File vehiclesDB;
 
     public DataManager(){
         initVehicleDB(Vehicle.TYPE_CAR);
@@ -55,8 +54,8 @@ public class DataManager {
     //endregion
 
 
-    public void addVehicle(Vehicle vehicle,String vehicleType){
-        switch (vehicleType){
+    public void addVehicle(Vehicle vehicle){
+        switch (vehicle.getType()){
             case Vehicle.TYPE_CAR -> {
                 carDB.put(vehicle.getId(),vehicle);
                 allVehiclesDB.put(vehicle.getId(), vehicle);
@@ -85,7 +84,32 @@ public class DataManager {
         VehicleOwner owner = null;
         String[] keys = null;
 
-        try (BufferedReader br = new BufferedReader(new FileReader("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv"))) {
+        vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv");
+
+        if (!vehiclesDB.exists()){
+            try{
+                vehiclesDB.getParentFile().mkdirs();
+                vehiclesDB.createNewFile();
+                BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB, true));
+                for(String key:SearchOptions.DB_VEHICLES_KEYS){
+                    if(!key.equals(Vehicle.OWNER_TYPE)){
+                        buf.append(key).append(",");
+                    }else{
+                        buf.append(key);
+                        buf.newLine();
+                    }
+
+                }
+//                buf.append("id,brand,model,owner,type,numberplate,firstregistrationdate,horsepower,seats,price,taxrate,ownertype\n");
+                buf.close();
+
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+
+        try (BufferedReader br = new BufferedReader(new FileReader(vehiclesDB))) {
             String line;
             while ((line = br.readLine()) != null) {
 
@@ -107,7 +131,7 @@ public class DataManager {
                     }
                 }
                 //Creates owner from vehicle
-                String ownerType = vehicleInfo.get(OWNER_TYPE);
+                String ownerType = vehicleInfo.get(Vehicle.OWNER_TYPE);
                 switch (ownerType){
                     case VehicleOwner.TYPE_PERSON -> owner = new Person(vehicleInfo.get(Vehicle.OWNER).split(" ")[0]);
                     case VehicleOwner.TYPE_COMPANY -> owner = new Company(vehicleInfo.get(Vehicle.OWNER));
@@ -151,6 +175,11 @@ public class DataManager {
 
     }
 
+    private void initUsersDB(){
+
+    }
+
+
     public HashMap<Integer,Vehicle> getSearchResults(String searchText,String vehicleType,String searchType){
         HashMap<Integer, Vehicle> searchDB = null;
         HashMap<Integer, Vehicle> results = new HashMap<>();
@@ -177,6 +206,31 @@ public class DataManager {
             return results;
         }else{
             return null;
+        }
+
+    }
+
+    public void save(Vehicle vehicle){
+
+       this.vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicle.getType() + "DB.csv");
+
+        if(vehicle.getId() == Integer.MIN_VALUE){
+            vehicle.setId(allVehiclesDB.size());
+        }
+
+        addVehicle(vehicle);
+
+        String vehicleInfo = String.format("%s,%s,%s,%s %s,%s,%s,%s,%s,%s,%s,%s,%s%n",
+                vehicle.getId(),vehicle.getBrand(),vehicle.getModel(),vehicle.getOwner().getOwnerInfo()[0],vehicle.getOwner().getOwnerInfo()[1],
+                vehicle.getType(), vehicle.getNumberPlate(),vehicle.getFirstRegistrationDate(),vehicle.getHorsePower(),vehicle.getSeats(),
+                vehicle.getPrice(),vehicle.getTaxRate(),vehicle.getOwner().getType());
+        try{
+            BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB, true));
+            buf.append(vehicleInfo);
+            buf.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
         }
 
     }
