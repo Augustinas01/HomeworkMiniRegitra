@@ -7,8 +7,6 @@ import data.constants.SearchOptions;
 import data.constants.Titles;
 import objects.Vehicle;
 import objects.VehicleOwner;
-import objects.owners.Company;
-import objects.owners.Person;
 import objects.vehicles.Car;
 import objects.vehicles.Motorcycle;
 import objects.vehicles.Supercar;
@@ -80,7 +78,7 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.REGISTER_VEHICLE  -> registerVehicle();
             case Buttons.MY_VEHICLES       -> showMyVehiclesPanel();
             case Buttons.SEARCH            -> showSearchPanel(false);
-            case Buttons.LOG_OUT           -> view.showLoginPanel();
+            case Buttons.LOG_OUT           -> logOut();
             case Buttons.LOGIN             -> login();
             case Buttons.SIGN_UP           -> signUp();
             case Buttons.SEARCH_VEHICLE    -> showSearchPanel(true);
@@ -180,25 +178,25 @@ public class Brains implements MainWindow.MainWindowListener {
     }
 
     private void delButtonListener(ActionEvent e) {
-        Vehicle selectedVehicle = loggedUser.getVehiclesMap().get(e.getActionCommand());
+        LinkedHashMap<String, Object> vehicleInfo = dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).getInfo();
 
         int confirmResult = JOptionPane.showConfirmDialog(view,
                 String.format("Do you really want to remove this vehicle?\n\n%s: %s\nNumber plate: %s",
-                        selectedVehicle.getBrand(), selectedVehicle.getModel(), selectedVehicle.getNumberPlate()),
+                        vehicleInfo.get(Vehicle.BRAND), vehicleInfo.get(Vehicle.MODEL), vehicleInfo.get(Vehicle.NUMBER_PLATE)),
                 "Removal confirmation",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirmResult == JOptionPane.YES_OPTION) {
-            loggedUser.removeVehicle(e.getActionCommand());
-            loggedUser.save();
+            dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).setOwner(dataManager.getAllUsersDB().get(0));
             showMyVehiclesPanel();
 
         }
     }
     private void editButtonListener(ActionEvent e){
         editDialog = new JDialog();
-        vehicleEditPanel = new VehicleEditPanel(loggedUser.getVehiclesMap().get(e.getActionCommand()).getInfo(),e1 -> editDialogListener(e1,e));
-        editDialog.setTitle("Editing - " +loggedUser.getVehiclesMap().get(e.getActionCommand()).getNumberPlate());
+        LinkedHashMap<String, Object> vehicleInfo = dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).getInfo();
+        vehicleEditPanel = new VehicleEditPanel(vehicleInfo,e1 -> editDialogListener(e1,e));
+        editDialog.setTitle("Editing - " + vehicleInfo.get(Vehicle.NUMBER_PLATE));
         editDialog.setLayout(new FlowLayout());
         editDialog.add(vehicleEditPanel);
         editDialog.pack();
@@ -210,10 +208,10 @@ public class Brains implements MainWindow.MainWindowListener {
         switch (e1.getActionCommand()){
             case Buttons.CANCEL -> editDialog.dispose();
             case Buttons.CHANGE -> {
-                loggedUser.getVehiclesMap().get(e.getActionCommand()).setInfo(vehicleEditPanel.getDialogTFsStrings());
-                dataManager.save(loggedUser.getVehiclesMap().get(e.getActionCommand()));
+                dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).setInfo(vehicleEditPanel.getDialogTFsStrings());
+//                dataManager.save(loggedUser.getVehiclesMap().get(e.getActionCommand()));
 //                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
-                loggedUser.save();
+//                loggedUser.save();
 //                dataManager.addVehicle(loggedUser.getVehiclesMap().get(e.getActionCommand()));
                 showMyVehiclesPanel();
                 editDialog.dispose();
@@ -256,6 +254,8 @@ public class Brains implements MainWindow.MainWindowListener {
         if(vehicle != null) {
             vehicle.setInfo(view.getRegInfoMap());
             dataManager.save(vehicle);
+            loggedUser.addVehicleToSet(vehicle.getId());
+            dataManager.save(loggedUser);
         }
     }
 
@@ -279,7 +279,6 @@ public class Brains implements MainWindow.MainWindowListener {
     private void registerUser(){
         String age = JOptionPane.showInputDialog(view,"What is your age?","Registration",JOptionPane.PLAIN_MESSAGE);
 
-
         //Registration confirmation
         if (!(age == null)) {
             String confirmationText = String.format("First name: %s %n" +
@@ -295,39 +294,10 @@ public class Brains implements MainWindow.MainWindowListener {
         } else {
             return;
         }
-        dataManager.register(view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age,this.userType);
 
+        dataManager.register(view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age);
 
-//        String userInfo = String.format("firstname,%s%n" +
-//                "lastname,%s%n" +
-//                "age,%s%n" +
-//                "type,%s%n" +
-//                "owns,%s%n",view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age,this.userType,null);
-//
-//        File usersDB = new File("src/data/users");
-//        if (!usersDB.exists())
-//        {
-//            try{
-//                usersDB.mkdirs();
-//                usersDB.createNewFile();
-//            }
-//            catch (IOException e)
-//            {
-//                e.printStackTrace();
-//            }
-//        }
-//        try{
-//            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getLoginFirstNameJTF().getText(), true));
-//
-//            buf.append(userInfo);
-//
-//            buf.close();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//        }
         JOptionPane.showMessageDialog(view,"User created succesfully!");
-
     }
 
     private void registerCompany(){
@@ -351,14 +321,12 @@ public class Brains implements MainWindow.MainWindowListener {
                 "owns,%s%n",title,view.getCompanyIdJTF().getText(),null);
 
         File usersDB = new File("src/data/users");
-        if (!usersDB.exists())
-        {
+        if (!usersDB.exists()) {
             try{
                 usersDB.mkdirs();
                 usersDB.createNewFile();
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -539,25 +507,36 @@ public class Brains implements MainWindow.MainWindowListener {
             vehiclesGrid.add(cell);
         }
 
-        loggedUser.getVehiclesMap().forEach((vehicleId,vehicle) ->{
+        HashMap<Integer,Vehicle> vehicles = dataManager.getSearchResults(loggedUser.getOwnerInfo()[0] + " " + loggedUser.getOwnerInfo()[1],
+                SearchOptions.DB_ALL_VEHICLES,
+                SearchOptions.BY_OWNER);
 
-            LinkedHashMap<String,Object> vehicleInfo = vehicle.getInfo();
 
-            vehicleInfo.forEach((info,stat) -> {
-                switch (info){
-                    case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.SEATS, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
-                        JLabel cell = new JLabel(stat.toString());
-                        cell.setHorizontalAlignment(SwingConstants.CENTER);
-                        cell.setBorder(new LineBorder(Color.BLACK));
-                        vehiclesGrid.add(cell);
+
+        if(vehicles != null) {
+            vehicles.forEach((vehicleId, vehicle) -> {
+
+                LinkedHashMap<String, Object> vehicleInfo = vehicle.getInfo();
+
+                vehicleInfo.forEach((info, stat) -> {
+                    switch (info) {
+                        case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.SEATS, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
+                            JLabel cell = new JLabel(stat.toString());
+                            cell.setHorizontalAlignment(SwingConstants.CENTER);
+                            cell.setBorder(new LineBorder(Color.BLACK));
+                            vehiclesGrid.add(cell);
+
+                        }
+                        case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(String.valueOf(stat)));
 
                     }
-                    case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
-
-                }
+                });
             });
-        });
-        vehiclesGridBody.add(vehiclesGrid);
+            vehiclesGridBody.add(vehiclesGrid);
+        }else {
+            vehiclesGridBody.add(new JLabel("You have no vehicles ;("));
+        }
+
 
         view.getMyVehiclesBody().add(vehiclesGridBody);
         view.showMyVehiclesPanel();
@@ -577,6 +556,14 @@ public class Brains implements MainWindow.MainWindowListener {
         editCell.add(delButton);
         editCell.add(editButton);
         return editCell;
+    }
+
+    private void logOut(){
+        if(dataManager.saveDB()){
+            dataManager = new DataManager();
+            view.showLoginPanel();
+        }
+
     }
 
 //    private void searchVehicle(){

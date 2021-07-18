@@ -26,8 +26,10 @@ public class Person extends VehicleOwner {
     public String getLastName() {
         return lastName;
     }
-
-
+    @Override
+    public int getAge(){
+        return this.age;
+    }
     @Override
     public String[] getOwnerInfo(){
         return new String[]{firstName,lastName};

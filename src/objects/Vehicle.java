@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Vehicle {
 
     public static final String ID = "id";
-    public static final String OWNER = "owner";
+    public static final String OWNER = "Owner";
     public static final String OWNER_TYPE = VehicleOwner.TYPE;
     public static final String HORSE_POWER = "horse power";
     public static final String SEATS = "seats";

@@ -22,6 +22,7 @@ public class VehicleOwner {
     public static final String TYPE = "owner type";
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
+    public static final String AGE ="age";
     public static final String COMPANY_TITLE = "company title";
     public static final String COMPANY_ID = "company id";
     public static final String COMPANY_TAX_DEDUCTION = "tax deduction";
@@ -62,6 +63,9 @@ public class VehicleOwner {
     public Set<Integer> getOwnedIds(){
         return vehiclesMap.keySet();
     }
+    public int getAge(){
+        return Integer.MIN_VALUE;
+    }
     //endregion
 
     //region Setters
@@ -81,9 +85,15 @@ public class VehicleOwner {
         this.vehiclesMap.put(vehicle.getId(),vehicle);
     }
 
-    public void addVehicleToMap(int vehicleId){
-        this.vehiclesMap.put(vehicleId,getVehicle(String.valueOf(vehicleId)));
+    public void addVehicleToSet(int vehicleID){
+        if(this.ownedVehicles == null){
+            this.ownedVehicles = Set.of(vehicleID);
+        }else{
+            this.ownedVehicles.add(vehicleID);
+        }
+
     }
+
 
     public void removeVehicle(String vehicleId){
         this.vehiclesMap.remove(vehicleId);
@@ -97,11 +107,11 @@ public class VehicleOwner {
         this.id = id;
     }
 
-    public void setVehicleList(String[] vehicles) {
-        for(String vehicle:vehicles){
-            vehiclesList.add(getVehicle(vehicle));
-        }
-    }
+//    public void setVehicleList(String[] vehicles) {
+//        for(String vehicle:vehicles){
+//            vehiclesList.add(getVehicle(vehicle));
+//        }
+//    }
 
     public void setVehiclesMap(String[] vehicles) {
         for(String vehicle:vehicles){

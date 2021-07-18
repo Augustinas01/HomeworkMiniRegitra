@@ -26,15 +26,7 @@ public class DataManager {
 
     public DataManager(){
         initUsersDB();
-        initVehicleDB(Vehicle.TYPE_CAR);
-        initVehicleDB(Vehicle.TYPE_MOTORCYCLE);
-        initVehicleDB(Vehicle.TYPE_TRUCK);
-        initVehicleDB(Vehicle.TYPE_SUPERCAR);
-        allVehiclesDB.putAll(carDB);
-        allVehiclesDB.putAll(motorcycleDB);
-        allVehiclesDB.putAll(truckDB);
-        allVehiclesDB.putAll(superCarDB);
-
+        initVehicleDB();
     }
 
     //region Getters
@@ -82,100 +74,107 @@ public class DataManager {
         }
     }
 
-    private void initVehicleDB(String vehicleType){
+    private void initVehicleDB(){
 
         HashMap<Integer,Vehicle> vehicles = new HashMap<>();
         HashMap<String,String> vehicleInfo = new HashMap<>();
 
         Vehicle vehicle = null;
-        VehicleOwner owner = null;
         String[] keys = null;
 
-        vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv");
+        for(String vehicleType:Vehicle.ALL_TYPES) {
 
-        if (!vehiclesDB.exists()){
-            try{
-                vehiclesDB.getParentFile().mkdirs();
-                vehiclesDB.createNewFile();
-                BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB, true));
-                for(String key:SearchOptions.DB_VEHICLES_KEYS){
-                    if(!key.equals(VehicleOwner.ID)){
-                        buf.append(key).append(",");
-                    }else{
-                        buf.append(key);
-                        buf.newLine();
+            vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv");
+
+            if (!vehiclesDB.exists()) {
+                try {
+                    vehiclesDB.getParentFile().mkdirs();
+                    vehiclesDB.createNewFile();
+                    BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB, true));
+                    for (String key : SearchOptions.DB_VEHICLES_KEYS) {
+                        if (!key.equals(VehicleOwner.ID)) {
+                            buf.append(key).append(",");
+                        } else {
+                            buf.append(key);
+                            buf.newLine();
+                        }
                     }
-                }
-                buf.close();
+                    buf.close();
 
-            }catch (IOException e){
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try (BufferedReader br = new BufferedReader(new FileReader(vehiclesDB))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+
+                    String[] data = line.split(",");
+
+                    //Sets keys
+                    if (data[0].equals(Vehicle.ID)) {
+                        keys = data;
+                        continue;
+                    }
+
+                    int i = 0;
+
+                    //Vehicle info to HashMap
+                    if (keys != null) {
+                        for (String key : keys) {
+                            vehicleInfo.put(key, data[i]);
+                            i++;
+                        }
+                    }
+                    //Creates vehicle
+                    switch (vehicleInfo.get(Vehicle.TYPE)) {
+                        case Vehicle.TYPE_CAR -> {
+                            vehicle = new Car(allUsersDB.get(Integer.parseInt(vehicleInfo.get(VehicleOwner.ID))), Vehicle.TYPE_CAR);
+                            vehicle.setInfo(vehicleInfo);
+                        }
+                        case Vehicle.TYPE_MOTORCYCLE -> {
+                            vehicle = new Motorcycle(allUsersDB.get(Integer.parseInt(vehicleInfo.get(VehicleOwner.ID))));
+                            vehicle.setInfo(vehicleInfo);
+                        }
+                        case Vehicle.TYPE_TRUCK -> {
+                            vehicle = new Truck(allUsersDB.get(Integer.parseInt(vehicleInfo.get(VehicleOwner.ID))));
+                            vehicle.setInfo(vehicleInfo);
+                        }
+                        case Vehicle.TYPE_SUPERCAR -> {
+                            vehicle = new Supercar(allUsersDB.get(Integer.parseInt(vehicleInfo.get(VehicleOwner.ID))));
+                            vehicle.setInfo(vehicleInfo);
+                        }
+                    }
+                    if (vehicle != null) {
+                        vehicles.put(vehicle.getId(), vehicle);
+                    }
+
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
-
-        try (BufferedReader br = new BufferedReader(new FileReader(vehiclesDB))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-
-                String[] data = line.split(",");
-
-                //Sets keys
-                if(data[0].equals(Vehicle.ID)){
-                    keys = data;
-                    continue;
+            switch (vehicleType) {
+                case Vehicle.TYPE_CAR -> {
+                    this.carDB = vehicles;
+                    this.allVehiclesDB.putAll(vehicles);
                 }
-
-                int i = 0;
-
-                //Vehicle info to HashMap
-                if(keys != null) {
-                    for (String key : keys) {
-                        vehicleInfo.put(key, data[i]);
-                        i++;
-                    }
+                case Vehicle.TYPE_MOTORCYCLE -> {
+                    this.motorcycleDB = vehicles;
+                    this.allVehiclesDB.putAll(vehicles);
                 }
-                //Creates owner from vehicle
-                String ownerType = vehicleInfo.get(Vehicle.OWNER_TYPE);
-                switch (ownerType){
-                    case VehicleOwner.TYPE_PERSON -> owner = new Person();
-                    case VehicleOwner.TYPE_COMPANY -> owner = new Company(vehicleInfo.get(Vehicle.OWNER));
-                    case VehicleOwner.TYPE_ADMIN -> owner = new Person();
+                case Vehicle.TYPE_TRUCK -> {
+                    this.truckDB = vehicles;
+                    this.allVehiclesDB.putAll(vehicles);
                 }
-                //Creates vehicle
-                switch (vehicleInfo.get(Vehicle.TYPE)){
-                    case Vehicle.TYPE_CAR -> {
-                        vehicle = new Car(owner, Vehicle.TYPE_CAR);
-                        vehicle.setInfo(vehicleInfo);
-                    }
-                    case Vehicle.TYPE_MOTORCYCLE -> {
-                        vehicle = new Motorcycle(owner);
-                        vehicle.setInfo(vehicleInfo);
-                    }
-                    case Vehicle.TYPE_TRUCK -> {
-                        vehicle = new Truck(owner);
-                        vehicle.setInfo(vehicleInfo);
-                    }
-                    case Vehicle.TYPE_SUPERCAR -> {
-                        vehicle = new Supercar(owner);
-                        vehicle.setInfo(vehicleInfo);
-                    }
+                case Vehicle.TYPE_SUPERCAR -> {
+                    this.superCarDB = vehicles;
+                    this.allVehiclesDB.putAll(vehicles);
                 }
-                if(vehicle != null) {
-                    vehicles.put(vehicle.getId(), vehicle);
-                }
-
+                default -> System.out.println("Vehicles database initialization failed :(");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        switch (vehicleType){
-            case Vehicle.TYPE_CAR -> this.carDB =vehicles;
-            case Vehicle.TYPE_MOTORCYCLE -> this.motorcycleDB = vehicles;
-            case Vehicle.TYPE_TRUCK -> this.truckDB = vehicles;
-            case Vehicle.TYPE_SUPERCAR -> this.superCarDB = vehicles;
-            default -> System.out.println("Vehicles database initialization failed :(");
         }
 
     }
@@ -292,16 +291,7 @@ public class DataManager {
             vehicle.setId(allVehiclesDB.size());
         }
 
-        vehicle.getOwner().addVehicleToMap(vehicle);
-        addVehicle(vehicle);
-
-        String vehicleInfo = String.format("%s,%s,%s,%s %s,%s,%s,%s,%s,%s,%s,%s,%s%n",
-                vehicle.getId(),vehicle.getBrand(),vehicle.getModel(),vehicle.getOwner().getOwnerInfo()[0],vehicle.getOwner().getOwnerInfo()[1],
-                vehicle.getType(), vehicle.getNumberPlate(),vehicle.getFirstRegistrationDate(),vehicle.getHorsePower(),vehicle.getSeats(),
-                vehicle.getPrice(),vehicle.getTaxRate(),vehicle.getOwner().getType());
-        try{
-            BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB, true));
-//            buf.append(vehicleInfo);
+        try(BufferedWriter buf = new BufferedWriter(new FileWriter(vehiclesDB, true))){
             for(String key:SearchOptions.DB_VEHICLES_KEYS){
                 if(!key.equals(VehicleOwner.ID)){
                     if(vehicle.getInfo().get(key) != null){
@@ -315,11 +305,11 @@ public class DataManager {
                     buf.newLine();
                 }
             }
-            buf.close();
         }
         catch (IOException e){
             e.printStackTrace();
         }
+        addVehicle(vehicle);
 
     }
 
@@ -328,15 +318,14 @@ public class DataManager {
         if(user.getId() == Integer.MIN_VALUE){
             user.setId(allUsersDB.size());
         }
+
         allUsersDB.put(user.getId(),user);
 
-        String userInfo = String.format("%s,%s,%s,%s,%s,%s,%s,%s%n",
-                user.getId(),user.getOwnerInfo()[0],user.getOwnerInfo()[1],user.getCompanyTitle(),user.getCompanyId(),
+        String userInfo = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
+                user.getId(),user.getOwnerInfo()[0],user.getOwnerInfo()[1],user.getAge(),user.getCompanyTitle(),user.getCompanyId(),
                 user.getCompanyTaxDeduction(), user.getOwnedIds(),user.getType());
-        try{
-            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB, true));
+        try( BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB, true))){
             buf.append(userInfo);
-            buf.close();
         }
         catch (IOException e){
             e.printStackTrace();
@@ -345,7 +334,7 @@ public class DataManager {
 
     }
 
-    public void register(String firstName,String lastName,String age,String userType){
+    public void register(String firstName,String lastName,String age){
 
         Person user = new Person();
 
@@ -355,6 +344,29 @@ public class DataManager {
 
         save(user);
 
+    }
+
+    public boolean saveDB(){
+        for (String vehicleType:Vehicle.ALL_TYPES){
+            vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv");
+            if(!vehiclesDB.delete()){
+                return false;
+            }
+        }
+        if(usersDB.delete()) {
+            initUsersDB();
+            initVehicleDB();
+            allUsersDB.forEach((ownerID, owner) -> {
+                save(owner);
+            });
+            allVehiclesDB.forEach((vehicleID, vehicle) -> {
+                save(vehicle);
+            });
+            return true;
+        }else {
+            System.out.println("DATABASE SAVING FAILED ;(((");
+            return false;
+        }
     }
 
 
