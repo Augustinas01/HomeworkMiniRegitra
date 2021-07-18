@@ -81,10 +81,6 @@ public class VehicleOwner {
 
     //endregion
 
-    public void addVehicleToMap(Vehicle vehicle){
-        this.vehiclesMap.put(vehicle.getId(),vehicle);
-    }
-
     public void addVehicleToSet(int vehicleID){
         if(this.ownedVehicles == null){
             this.ownedVehicles = Set.of(vehicleID);
@@ -95,57 +91,12 @@ public class VehicleOwner {
     }
 
 
-    public void removeVehicle(String vehicleId){
-        this.vehiclesMap.remove(vehicleId);
-    }
-
     public void calculateVehicleTax(){
 
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-//    public void setVehicleList(String[] vehicles) {
-//        for(String vehicle:vehicles){
-//            vehiclesList.add(getVehicle(vehicle));
-//        }
-//    }
-
-    public void setVehiclesMap(String[] vehicles) {
-        for(String vehicle:vehicles){
-            vehiclesMap.put(getVehicle(vehicle).getId(),getVehicle(vehicle));
-        }
-    }
-
-    private Vehicle getVehicle(String vehicleID){
-        if(vehicleID.equals("null")){
-            return null;
-        }
-        Vehicle vehicle = null;
-        try (BufferedReader br = new BufferedReader(new FileReader("src/data/registeredVehicles/" + vehicleID))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String [] data = line.split(",");
-                if ("type".equals(data[0])) {
-                    switch (data[1]) {
-                        case "car" -> vehicle = new Car(this, Vehicle.TYPE_CAR);
-                        case "supercar" -> vehicle = new Supercar(this);
-                        case "truck" -> vehicle = new Truck(this);
-                        case "motorcycle" -> vehicle = new Motorcycle(this);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        vehicle.fillData(vehicleID);
-        return vehicle;
-    }
-
-    public void save(){
-
     }
 
 

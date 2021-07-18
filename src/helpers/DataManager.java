@@ -9,12 +9,10 @@ import objects.vehicles.Car;
 import objects.vehicles.Motorcycle;
 import objects.vehicles.Supercar;
 import objects.vehicles.Truck;
-import view.VehicleEditPanel;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Objects;
+
 
 
 public class DataManager {
@@ -84,7 +82,7 @@ public class DataManager {
 
         for(String vehicleType:Vehicle.ALL_TYPES) {
 
-            vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv");
+            vehiclesDB = new File("src/data/registeredVehicles/" + vehicleType + "DB.csv");
 
             if (!vehiclesDB.exists()) {
                 try {
@@ -186,7 +184,7 @@ public class DataManager {
         VehicleOwner owner = null;
         String[] keys = null;
 
-        usersDB = new File("src/data/users/csv" + "/" + "usersDB.csv");
+        usersDB = new File("src/data/users/" + "usersDB.csv");
 
         if (!usersDB.exists()){
             try{
@@ -285,7 +283,7 @@ public class DataManager {
 
     public void save(Vehicle vehicle){
 
-        this.vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicle.getType() + "DB.csv");
+        this.vehiclesDB = new File("src/data/registeredVehicles/" + vehicle.getType() + "DB.csv");
 
         if(vehicle.getId() == Integer.MIN_VALUE){
             vehicle.setId(allVehiclesDB.size());
@@ -348,7 +346,7 @@ public class DataManager {
 
     public boolean saveDB(){
         for (String vehicleType:Vehicle.ALL_TYPES){
-            vehiclesDB = new File("src/data/registeredVehicles/csv" + "/" + vehicleType + "DB.csv");
+            vehiclesDB = new File("src/data/registeredVehicles/" + vehicleType + "DB.csv");
             if(!vehiclesDB.delete()){
                 return false;
             }

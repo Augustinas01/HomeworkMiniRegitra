@@ -83,9 +83,7 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.SIGN_UP           -> signUp();
             case Buttons.SEARCH_VEHICLE    -> showSearchPanel(true);
             default                        -> System.out.println(e.getActionCommand());
-
         }
-
     }
 
     @Override
@@ -113,7 +111,6 @@ public class Brains implements MainWindow.MainWindowListener {
                 view.getVehicleModelsJCB().setModel(new DefaultComboBoxModel<>(getModelsList(Manufactor.FERRARI)));
             }
         }
-
     }
 
     @Override
@@ -158,14 +155,11 @@ public class Brains implements MainWindow.MainWindowListener {
                 view.getLoginTextFieldsJP().add(view.getLoginCompanyLoginJP());
                 view.getLoginCompanyLoginJP().setVisible(true);
             }
-
         }
-
     }
 
     @Override
     public void searchDBListener(ActionEvent e) {
-
         switch (Objects.requireNonNull(view.getSearchDatabaseJCB().getSelectedItem()).toString()){
             case SearchOptions.DB_ALL_VEHICLES -> databaseSelection = SearchOptions.DB_ALL_VEHICLES;
             case SearchOptions.DB_CARS -> databaseSelection = SearchOptions.DB_CARS;
@@ -173,8 +167,6 @@ public class Brains implements MainWindow.MainWindowListener {
             case SearchOptions.DB_TRUCK -> databaseSelection = SearchOptions.DB_TRUCK;
             case SearchOptions.DB_SUPERCAR -> databaseSelection = SearchOptions.DB_SUPERCAR;
         }
-
-
     }
 
     private void delButtonListener(ActionEvent e) {
@@ -209,10 +201,6 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.CANCEL -> editDialog.dispose();
             case Buttons.CHANGE -> {
                 dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).setInfo(vehicleEditPanel.getDialogTFsStrings());
-//                dataManager.save(loggedUser.getVehiclesMap().get(e.getActionCommand()));
-//                loggedUser.getVehiclesMap().get(e.getActionCommand()).save();
-//                loggedUser.save();
-//                dataManager.addVehicle(loggedUser.getVehiclesMap().get(e.getActionCommand()));
                 showMyVehiclesPanel();
                 editDialog.dispose();
             }
@@ -260,6 +248,7 @@ public class Brains implements MainWindow.MainWindowListener {
     }
 
 
+    //TODO JTF Validation
 //    private boolean vehicleRegistrationValidation(){
 //        view.getRegistrationYearJTF().getText()
 //        String vehicleFirstRegistrationYear = String.format(
@@ -565,30 +554,6 @@ public class Brains implements MainWindow.MainWindowListener {
         }
 
     }
-
-//    private void searchVehicle(){
-//        if(!view.getSearchNumberPlateJTF().getText().equals(SearchOptions.BY_NUMBER_PLATE)){
-//            showSearchPanel(dataManager.getSearchResults(view.getSearchNumberPlateJTF().getText(), databaseSelection,Vehicle.NUMBER_PLATE));
-//        }
-//        if (!view.getSearchBrandJTF().getText().equals(SearchOptions.BY_BRAND)){
-//            showSearchPanel(dataManager.getSearchResults(view.getSearchBrandJTF().getText(),databaseSelection,Vehicle.BRAND));
-//        }
-//        if(!view.getSearchOwnerJTF().getText().equals(SearchOptions.BY_OWNER)){
-//            showSearchPanel(dataManager.getSearchResults(view.getSearchOwnerJTF().getText(),databaseSelection,Vehicle.OWNER));
-//        }
-//    }
-//    private boolean searchResultSwitch(LinkedHashMap<String,Object> vehicleInfo, String resultCriteria, String searchCriteria){
-//        switch (resultCriteria){
-//            case ALL: return true;
-//            case BY_NUMBER_PLATE:
-//                if(vehicleInfo.get(Vehicle.NUMBER_PLATE).equals(searchCriteria)){
-//                    return true;
-//                }
-//            default: return false;
-//        }
-//
-//    }
-
 
 
 }
