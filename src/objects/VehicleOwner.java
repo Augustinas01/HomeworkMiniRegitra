@@ -8,43 +8,81 @@ import objects.vehicles.Truck;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class VehicleOwner {
 
     public static final String TYPE_PERSON = "Person";
     public static final String TYPE_COMPANY = "Company";
     public static final String TYPE_ADMIN = "admin";
+    public static final String ID = "owner id";
+    public static final String TYPE = "owner type";
+    public static final String FIRST_NAME = "first name";
+    public static final String LAST_NAME = "last name";
+    public static final String COMPANY_TITLE = "company title";
+    public static final String COMPANY_ID = "company id";
+    public static final String COMPANY_TAX_DEDUCTION = "tax deduction";
+    public static final String OWNED_VEHICLES_IDS = "owned ids";
 
     int id;
     ArrayList<Vehicle> vehiclesList = new ArrayList<>();
-    HashMap<String, Vehicle> vehiclesMap = new HashMap<>();
+    HashMap<Integer, Vehicle> vehiclesMap = new HashMap<>();
+    Set<Integer> ownedVehicles;
     String registrationNumber,type;
 
     public VehicleOwner(String type){
         this.type = type;
+        this.id = Integer.MIN_VALUE;
 
     }
 
+    //region Getters
     public String[] getOwnerInfo(){
         return null;
     }
-
-    public HashMap<String, Vehicle> getVehiclesMap() {
+    public HashMap<Integer, Vehicle> getVehiclesMap() {
         return vehiclesMap;
     }
     public String getType(){
         return this.type;
     }
+    public int getId() {
+        return id;
+    }
+    public String getCompanyTitle() {return null;}
+    public String getCompanyId() {
+        return null;
+    }
+    public BigDecimal getCompanyTaxDeduction(){
+        return null;
+    }
+    public Set<Integer> getOwnedIds(){
+        return vehiclesMap.keySet();
+    }
+    //endregion
 
+    //region Setters
+
+
+    public void setInfo(HashMap<String,String> info){
+
+    }
+    public void setOwnedVehiclesIds(String ids){
+        System.out.println("Setting Ids in VehicleOwner");
+    }
+
+
+    //endregion
 
     public void addVehicleToMap(Vehicle vehicle){
-        this.vehiclesMap.put(String.valueOf(vehicle.getId()),vehicle);
+        this.vehiclesMap.put(vehicle.getId(),vehicle);
     }
 
     public void addVehicleToMap(int vehicleId){
-        this.vehiclesMap.put(String.valueOf(vehicleId),getVehicle(String.valueOf(vehicleId)));
+        this.vehiclesMap.put(vehicleId,getVehicle(String.valueOf(vehicleId)));
     }
 
     public void removeVehicle(String vehicleId){
@@ -67,7 +105,7 @@ public class VehicleOwner {
 
     public void setVehiclesMap(String[] vehicles) {
         for(String vehicle:vehicles){
-            vehiclesMap.put(vehicle,getVehicle(vehicle));
+            vehiclesMap.put(getVehicle(vehicle).getId(),getVehicle(vehicle));
         }
     }
 

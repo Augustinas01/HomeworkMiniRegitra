@@ -1,6 +1,7 @@
 package data.constants;
 
 import objects.Vehicle;
+import objects.VehicleOwner;
 
 public final class SearchOptions {
     public static final String BY_NUMBER_PLATE = "Number plate";
@@ -12,6 +13,8 @@ public final class SearchOptions {
     public static final String DB_MOTORCYCLE = "Motorcycle";
     public static final String DB_TRUCK = "Truck";
     public static final String DB_SUPERCAR = "Supercar";
-    public static final String[] DB_VEHICLES_KEYS = {Vehicle.ID,Vehicle.BRAND,Vehicle.MODEL,Vehicle.OWNER,Vehicle.TYPE,Vehicle.NUMBER_PLATE,Vehicle.REGISTRATION_DATE,
-                                                        Vehicle.HORSE_POWER,Vehicle.SEATS,Vehicle.PRICE,Vehicle.TAX_RATE,Vehicle.OWNER_TYPE};
+    public static final String[] DB_VEHICLES_KEYS = {Vehicle.ID,Vehicle.BRAND,Vehicle.MODEL,Vehicle.TYPE,Vehicle.NUMBER_PLATE,Vehicle.REGISTRATION_DATE,
+                                                        Vehicle.HORSE_POWER,Vehicle.SEATS,Vehicle.PRICE,Vehicle.TAX_RATE,VehicleOwner.ID};
+    public static final String[] DB_USER_KEYS = {VehicleOwner.ID,VehicleOwner.FIRST_NAME,VehicleOwner.LAST_NAME,VehicleOwner.COMPANY_TITLE,VehicleOwner.COMPANY_ID,
+                                                    VehicleOwner.COMPANY_TAX_DEDUCTION, VehicleOwner.OWNED_VEHICLES_IDS,VehicleOwner.TYPE};
 }

@@ -24,10 +24,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class Brains implements MainWindow.MainWindowListener {
 
@@ -53,6 +50,7 @@ public class Brains implements MainWindow.MainWindowListener {
     public Brains(MainWindow view){
         this.view = view;
         this.dataManager = new DataManager();
+        this.loggedUser = null;
 
         //Set listeners
         view.setButtonsListener(e -> buttonsListener(e));
@@ -257,9 +255,7 @@ public class Brains implements MainWindow.MainWindowListener {
         }
         if(vehicle != null) {
             vehicle.setInfo(view.getRegInfoMap());
-//            dataManager.addVehicle(vehicle);
             dataManager.save(vehicle);
-//            vehicle.save();
         }
     }
 
@@ -283,6 +279,8 @@ public class Brains implements MainWindow.MainWindowListener {
     private void registerUser(){
         String age = JOptionPane.showInputDialog(view,"What is your age?","Registration",JOptionPane.PLAIN_MESSAGE);
 
+
+        //Registration confirmation
         if (!(age == null)) {
             String confirmationText = String.format("First name: %s %n" +
                     "Last name: %s %n" +
@@ -297,35 +295,37 @@ public class Brains implements MainWindow.MainWindowListener {
         } else {
             return;
         }
+        dataManager.register(view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age,this.userType);
 
-        String userInfo = String.format("firstname,%s%n" +
-                "lastname,%s%n" +
-                "age,%s%n" +
-                "type,%s%n" +
-                "owns,%s%n",view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age,this.userType,null);
 
-        File usersDB = new File("src/data/users");
-        if (!usersDB.exists())
-        {
-            try{
-                usersDB.mkdirs();
-                usersDB.createNewFile();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        try{
-            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getLoginFirstNameJTF().getText(), true));
-
-            buf.append(userInfo);
-
-            buf.close();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
+//        String userInfo = String.format("firstname,%s%n" +
+//                "lastname,%s%n" +
+//                "age,%s%n" +
+//                "type,%s%n" +
+//                "owns,%s%n",view.getLoginFirstNameJTF().getText(),view.getLoginLastNameJTF().getText(),age,this.userType,null);
+//
+//        File usersDB = new File("src/data/users");
+//        if (!usersDB.exists())
+//        {
+//            try{
+//                usersDB.mkdirs();
+//                usersDB.createNewFile();
+//            }
+//            catch (IOException e)
+//            {
+//                e.printStackTrace();
+//            }
+//        }
+//        try{
+//            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getLoginFirstNameJTF().getText(), true));
+//
+//            buf.append(userInfo);
+//
+//            buf.close();
+//        }
+//        catch (IOException e){
+//            e.printStackTrace();
+//        }
         JOptionPane.showMessageDialog(view,"User created succesfully!");
 
     }
@@ -381,10 +381,9 @@ public class Brains implements MainWindow.MainWindowListener {
         System.out.println("Login button pressed");
         switch (this.userType){
             case VehicleOwner.TYPE_PERSON -> {
-                if(authorize(view.getLoginFirstNameJTF().getText())){
+                loggedUser = authorize(view.getLoginFirstNameJTF().getText());
+                if(loggedUser != null){
                     view.showMainPanel();
-
-                    loggedUser = new Person(view.getLoginFirstNameJTF().getText());
 
                     view.getLoginFirstNameJTF().setText("");
                     view.getLoginLastNameJTF().setText("");
@@ -394,10 +393,9 @@ public class Brains implements MainWindow.MainWindowListener {
                 }
             }
             case VehicleOwner.TYPE_COMPANY -> {
-                if(authorize(view.getCompanyIdJTF().getText())){
+                if(loggedUser != null){
                     view.showMainPanel();
 
-                    loggedUser = new Company(view.getCompanyIdJTF().getText());
 
                     view.getLoginFirstNameJTF().setText("");
                     view.getLoginLastNameJTF().setText("");
@@ -421,14 +419,17 @@ public class Brains implements MainWindow.MainWindowListener {
 
 
 
-    private boolean authorize(String username){
-        File file = new File("src/data/users");
-        for(File user: Objects.requireNonNull(file.listFiles())){
-            if(user.getName().equals(username)){
-                return true;
+    private VehicleOwner authorize(String username){
+
+        Collection<VehicleOwner> users =dataManager.getAllUsersDB().values();
+
+        for(VehicleOwner user:users){
+            if(user.getOwnerInfo()[0].equals(username)){
+                return user;
             }
         }
-        return false;
+
+        return null;
     }
 
 

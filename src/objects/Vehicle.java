@@ -1,5 +1,6 @@
 package objects;
 
+import data.constants.SearchOptions;
 import objects.owners.Person;
 
 import java.io.*;
@@ -13,7 +14,7 @@ public class Vehicle {
 
     public static final String ID = "id";
     public static final String OWNER = "owner";
-    public static final String OWNER_TYPE = "owner type";
+    public static final String OWNER_TYPE = VehicleOwner.TYPE;
     public static final String HORSE_POWER = "horse power";
     public static final String SEATS = "seats";
     public static final String BRAND = "brand";
@@ -101,6 +102,7 @@ public class Vehicle {
         info.put(OWNER,String.format("%s %s",owner.getOwnerInfo()[0],owner.getOwnerInfo()[1]));
         info.put(ID, id);
         info.put(REGISTRATION_DATE, firstRegistrationDate);
+        info.put(VehicleOwner.ID,this.owner.getId());
         return info;
     }
     //endregion
