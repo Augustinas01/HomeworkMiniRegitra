@@ -41,6 +41,15 @@ public class VehicleOwner {
     }
 
     //region Getters
+
+    public String getFirstName(){
+        return null;
+    }
+
+    public String getLastName(){
+        return null;
+    }
+
     public String[] getOwnerInfo(){
         return null;
     }
@@ -54,7 +63,7 @@ public class VehicleOwner {
         return id;
     }
     public String getCompanyTitle() {return null;}
-    public String getCompanyId() {
+    public String getCompanyID() {
         return null;
     }
     public BigDecimal getCompanyTaxDeduction(){

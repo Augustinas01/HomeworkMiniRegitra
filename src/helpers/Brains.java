@@ -305,30 +305,32 @@ public class Brains implements MainWindow.MainWindowListener {
         }else{
             return;
         }
-        String companyInfo = String.format("title,%s%n" +
-                "no,%s%n" +
-                "owns,%s%n",title,view.getCompanyIdJTF().getText(),null);
+        dataManager.register(title,view.getCompanyIdJTF().getText());
 
-        File usersDB = new File("src/data/users");
-        if (!usersDB.exists()) {
-            try{
-                usersDB.mkdirs();
-                usersDB.createNewFile();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try{
-            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getCompanyIdJTF().getText(), true));
+//        String companyInfo = String.format("title,%s%n" +
+//                "no,%s%n" +
+//                "owns,%s%n",title,view.getCompanyIdJTF().getText(),null);
 
-            buf.append(companyInfo);
-
-            buf.close();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
+//        File usersDB = new File("src/data/users");
+//        if (!usersDB.exists()) {
+//            try{
+//                usersDB.mkdirs();
+//                usersDB.createNewFile();
+//            }
+//            catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        try{
+//            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getCompanyIdJTF().getText(), true));
+//
+//            buf.append(companyInfo);
+//
+//            buf.close();
+//        }
+//        catch (IOException e){
+//            e.printStackTrace();
+//        }
         JOptionPane.showMessageDialog(view,"User created succesfully!");
     }
     //endregion
@@ -350,6 +352,7 @@ public class Brains implements MainWindow.MainWindowListener {
                 }
             }
             case VehicleOwner.TYPE_COMPANY -> {
+                loggedUser = authorize(view.getCompanyIdJTF().getText());
                 if(loggedUser != null){
                     view.showMainPanel();
 
@@ -381,8 +384,17 @@ public class Brains implements MainWindow.MainWindowListener {
         Collection<VehicleOwner> users =dataManager.getAllUsersDB().values();
 
         for(VehicleOwner user:users){
-            if(user.getOwnerInfo()[0].equals(username)){
-                return user;
+            switch (this.userType){
+                case VehicleOwner.TYPE_PERSON -> {
+                    if (user.getFirstName() != null && user.getFirstName().equals(username)) {
+                        return user;
+                    }
+                }
+                case VehicleOwner.TYPE_COMPANY -> {
+                    if(user.getCompanyID() != null && user.getCompanyID().equals(username)){
+                        return user;
+                    }
+                }
             }
         }
 

@@ -99,7 +99,12 @@ public class Vehicle {
         info.put(NUMBER_PLATE, numberPlate);
         info.put(PRICE, price);
         info.put(TYPE,type);
-        info.put(OWNER,String.format("%s %s",owner.getOwnerInfo()[0],owner.getOwnerInfo()[1]));
+        if(owner.getType().equals(VehicleOwner.TYPE_PERSON)){
+            info.put(OWNER,String.format("%s %s",owner.getFirstName(),owner.getLastName()));
+        }else{
+            info.put(OWNER,owner.getCompanyTitle());
+        }
+
         info.put(ID, id);
         info.put(REGISTRATION_DATE, firstRegistrationDate);
         info.put(VehicleOwner.ID,this.owner.getId());
