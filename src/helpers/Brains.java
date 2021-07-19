@@ -233,6 +233,13 @@ public class Brains implements MainWindow.MainWindowListener {
 
     private void registerVehicle(){
         Vehicle vehicle = null;
+        if(view.getRegInfoMap() == null){
+            return;
+        }
+        if(dataManager.getSearchResults(view.getRegInfoMap().get(Vehicle.NUMBER_PLATE),SearchOptions.DB_ALL_VEHICLES,Vehicle.NUMBER_PLATE) != null){
+            JOptionPane.showMessageDialog(view,"Vehicle with this number plate already exists!");
+            return;
+        }
         switch (this.vehicleType){
             case Vehicle.TYPE_CAR        -> vehicle = new Car(loggedUser,Vehicle.TYPE_CAR);
             case Vehicle.TYPE_MOTORCYCLE -> vehicle = new Motorcycle(loggedUser);
@@ -242,29 +249,12 @@ public class Brains implements MainWindow.MainWindowListener {
         if(vehicle != null) {
             vehicle.setInfo(view.getRegInfoMap());
             dataManager.save(vehicle);
-            loggedUser.addVehicleToSet(vehicle.getId());
             dataManager.save(loggedUser);
+            JOptionPane.showMessageDialog(view,"Vehicle registered succesfully!");
         }
     }
 
 
-    //TODO JTF Validation
-//    private boolean vehicleRegistrationValidation(){
-//        view.getRegistrationYearJTF().getText()
-//        String vehicleFirstRegistrationYear = String.format(
-//                "%s-%s-%s",
-//                ,
-//                view.getRegistrationMonthJTF().getText(),
-//                view.getRegistrationDayJTF().getText());
-//        String vehicleHP = view.getVehicleHorsePowerJTF().getText();
-//        String vehiclePrice = view.getVehiclePriceJTF().getText();
-//        String vehicleSeatCount = view.getVehicleSeatCountJTF().getText();
-//        String vehicleNumberPlate = view.getNumberPlateJTF().getText();
-//
-//
-//    }
-
-    //TODO optimization, user writing can be one method
     private void registerUser(){
         String age = JOptionPane.showInputDialog(view,"What is your age?","Registration",JOptionPane.PLAIN_MESSAGE);
 

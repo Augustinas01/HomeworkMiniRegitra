@@ -4,9 +4,13 @@ import data.constants.Buttons;
 import objects.Vehicle;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 public class RegisterPanel extends JPanel {
@@ -73,11 +77,37 @@ public class RegisterPanel extends JPanel {
 
     public HashMap<String,String> getRegInfoMap(){
         HashMap<String,String> info = new HashMap<>();
-        info.put(Vehicle.REGISTRATION_DATE,String.format("%s-%s-%s",registrationYear.getText(),registrationMonth.getText(),registrationDay.getText()));
-        info.put(Vehicle.HORSE_POWER,vehicleHPTextField.getText());
-        info.put(Vehicle.PRICE,vehiclePriceTF.getText());
-        info.put(Vehicle.SEATS,vehicleSeatCountTF.getText());
-        info.put(Vehicle.NUMBER_PLATE, vehicleNumberPlateTF.getText());
+
+        if(yearIsValid() && monthIsValid() && dayIsValid()){
+            info.put(Vehicle.REGISTRATION_DATE,String.format("%s-%s-%s",registrationYear.getText(),registrationMonth.getText(),registrationDay.getText()));
+        }else{
+            return null;
+        }
+
+        if(horsePowerIsValid()){
+            info.put(Vehicle.HORSE_POWER,vehicleHPTextField.getText());
+        }else{
+            return null;
+        }
+
+        if(priceIsValid()){
+            info.put(Vehicle.PRICE,vehiclePriceTF.getText());
+        }else{
+            return null;
+        }
+
+        if(seatsIsValid()){
+            info.put(Vehicle.SEATS,vehicleSeatCountTF.getText());
+        }else{
+            return null;
+        }
+
+        if(numberPlateIsValid()){
+            info.put(Vehicle.NUMBER_PLATE, vehicleNumberPlateTF.getText());
+        }else{
+            return null;
+        }
+
         info.put(Vehicle.BRAND, Objects.requireNonNull(vehicleMakersList.getSelectedItem()).toString());
         info.put(Vehicle.MODEL, Objects.requireNonNull(vehicleModelsList.getSelectedItem()).toString());
         return info;
@@ -171,9 +201,9 @@ public class RegisterPanel extends JPanel {
         //endregion
         //region Vehicle registration year text fields
         JPanel vehicleRegistrationFields = new JPanel();
-        this.registrationYear = new JTextField("Year");
-        this.registrationMonth = new JTextField("Month");
-        this.registrationDay = new JTextField("Day");
+        this.registrationYear = new JTextField(Vehicle.REGISTRATION_YEAR);
+        this.registrationMonth = new JTextField(Vehicle.REGISTRATION_MONTH);
+        this.registrationDay = new JTextField(Vehicle.REGISTRATION_DAY);
         vehicleRegistrationFields.add(registrationYear);
         vehicleRegistrationFields.add(registrationMonth);
         vehicleRegistrationFields.add(registrationDay);
@@ -235,6 +265,135 @@ public class RegisterPanel extends JPanel {
 
 
     //endregion
+
+
+    private boolean yearIsValid(){
+        String regYear = registrationYear.getText();
+
+        if(!regYear.equals(Vehicle.REGISTRATION_YEAR)){
+            try{
+                if(Integer.parseInt(regYear) <= LocalDate.now().getYear()){
+                    registrationYear.setBorder(new LineBorder(Color.green));
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Oops!");
+            }
+        }
+
+        registrationYear.setBorder(new LineBorder(Color.red));
+        return false;
+    }
+    private boolean monthIsValid(){
+        String regMonth = registrationMonth.getText();
+
+        if(!regMonth.equals(Vehicle.REGISTRATION_MONTH)){
+            try{
+                if(Integer.parseInt(regMonth) <= LocalDate.MAX.getMonthValue()){
+                    registrationMonth.setBorder(new LineBorder(Color.green));
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Oops!");
+            }
+        }
+
+        registrationMonth.setBorder(new LineBorder(Color.red));
+        return false;
+    }
+    private boolean dayIsValid(){
+        String regDay = registrationDay.getText();
+
+        if(!regDay.equals(Vehicle.REGISTRATION_DAY)){
+            try{
+                if(Integer.parseInt(regDay) <= LocalDate.MAX.getDayOfMonth()){
+                    registrationDay.setBorder(new LineBorder(Color.green));
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Oops!");
+            }
+        }
+
+        registrationDay.setBorder(new LineBorder(Color.red));
+        return false;
+    }
+
+    private boolean horsePowerIsValid(){
+        String horsePower = vehicleHPTextField.getText();
+
+        if(!horsePower.equals(Vehicle.HORSE_POWER)){
+            try {
+                if(Integer.parseInt(horsePower) <= 5000){
+                    vehicleHPTextField.setBorder(new LineBorder(Color.green));
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Oops!");
+            }
+        }
+        vehicleHPTextField.setBorder(new LineBorder(Color.red));
+        return false;
+    }
+
+    private boolean priceIsValid(){
+        if(!vehiclePriceTF.getText().equals(Vehicle.PRICE)) {
+            try {
+                new BigDecimal(vehiclePriceTF.getText());
+                vehiclePriceTF.setBorder(new LineBorder(Color.green));
+                return true;
+            } catch (NumberFormatException e) {
+                System.out.println("Oops!");
+            }
+        }
+        vehiclePriceTF.setBorder(new LineBorder(Color.red));
+        return false;
+    }
+
+    private boolean seatsIsValid(){
+        if(!vehicleSeatCountTF.getText().equals(Vehicle.SEATS)){
+            try {
+                if(Integer.parseInt(vehicleSeatCountTF.getText()) <= 300){
+                    vehicleSeatCountTF.setBorder(new LineBorder(Color.green));
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Oops!");
+            }
+        }
+        vehicleSeatCountTF.setBorder(new LineBorder(Color.red));
+        return false;
+    }
+
+    private boolean numberPlateIsValid(){
+        String[] numberPlate = vehicleNumberPlateTF.getText().split(":");
+
+        if(numberPlate.length != 2){
+            vehicleNumberPlateTF.setBorder(new LineBorder(Color.red));
+            return false;
+        }
+
+        if(!vehicleNumberPlateTF.getText().equals(Vehicle.NUMBER_PLATE) && numberPlate[0].length() == 3){
+
+            for (char c : numberPlate[0].toCharArray()) {
+                if (!Character.isLetter(c)) {
+                    vehicleNumberPlateTF.setBorder(new LineBorder(Color.red));
+                    return false;
+                }
+            }
+
+            try {
+                if(Integer.parseInt(numberPlate[1]) <= 999){
+                    vehicleNumberPlateTF.setBorder(new LineBorder(Color.green));
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Oops!");
+            }
+        }
+        vehicleNumberPlateTF.setBorder(new LineBorder(Color.red));
+        return false;
+    }
 
 
 
