@@ -1,11 +1,14 @@
 package view;
 
 import data.constants.Titles;
+import objects.Vehicle;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.HashMap;
 
 public class MainWindow extends JFrame {
@@ -67,27 +70,27 @@ public class MainWindow extends JFrame {
     public JComboBox<String> getVehicleModelsJCB(){
         return this.register.getVehicleModelsList();
     }
-    public JTextField getRegistrationYearJTF(){
-        return this.register.getRegistrationYear();
-    }
-    public JTextField getRegistrationMonthJTF(){
-        return this.register.getRegistrationMonth();
-    }
-    public JTextField getRegistrationDayJTF(){
-        return this.register.getRegistrationDay();
-    }
-    public JTextField getVehicleHorsePowerJTF(){
-        return this.register.getVehicleHPTextField();
-    }
-    public JTextField getVehiclePriceJTF(){
-        return this.register.getVehiclePriceTF();
-    }
-    public JTextField getVehicleSeatCountJTF(){
-        return this.register.getVehicleSeatCountTF();
-    }
-    public JTextField getNumberPlateJTF(){
-        return this.register.getVehicleNumberPlateTF();
-    }
+//    public JTextField getRegistrationYearJTF(){
+//        return this.register.getRegistrationYear();
+//    }
+//    public JTextField getRegistrationMonthJTF(){
+//        return this.register.getRegistrationMonth();
+//    }
+//    public JTextField getRegistrationDayJTF(){
+//        return this.register.getRegistrationDay();
+//    }
+//    public JTextField getVehicleHorsePowerJTF(){
+//        return this.register.getVehicleHPTextField();
+//    }
+//    public JTextField getVehiclePriceJTF(){
+//        return this.register.getVehiclePriceTF();
+//    }
+//    public JTextField getVehicleSeatCountJTF(){
+//        return this.register.getVehicleSeatCountTF();
+//    }
+//    public JTextField getNumberPlateJTF(){
+//        return this.register.getVehicleNumberPlateTF();
+//    }
     public HashMap<String,String> getRegInfoMap() {
         return this.register.getRegInfoMap();
     }
@@ -139,7 +142,7 @@ public class MainWindow extends JFrame {
     public ActionListener getButtonsListener() {
         return buttonsListener;
     }
-    public JComboBox getSearchDatabaseJCB() { return this.search.getDatabaseSelection();}
+    public JComboBox<String> getSearchDatabaseJCB() { return this.search.getDatabaseSelection();}
     //endregion
 
     public void init(){
@@ -252,4 +255,9 @@ public class MainWindow extends JFrame {
         this.myVehicles.setVisible(true);
 
     }
+
+
+
+
+
 }

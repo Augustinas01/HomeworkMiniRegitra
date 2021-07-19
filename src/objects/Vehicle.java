@@ -28,6 +28,9 @@ public class Vehicle {
     public static final String TYPE_TRUCK = "truck";
     public static final String TYPE_SUPERCAR = "supercar";
     public static final String REGISTRATION_DATE = "first registration date";
+    public static final String REGISTRATION_YEAR = "Year";
+    public static final String REGISTRATION_MONTH = "Month";
+    public static final String REGISTRATION_DAY = "Day";
     public static final String PRICE = "price";
 
 
