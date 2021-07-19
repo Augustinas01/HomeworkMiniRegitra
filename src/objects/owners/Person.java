@@ -58,6 +58,7 @@ public class Person extends VehicleOwner {
                 case ID -> super.setId(Integer.parseInt(stat));
                 case FIRST_NAME -> this.firstName = stat;
                 case LAST_NAME -> this.lastName = stat;
+                case AGE -> this.age = Integer.parseInt(stat);
                 case OWNED_VEHICLES_IDS -> super.setOwnedVehiclesIds(stat);
             }
         });

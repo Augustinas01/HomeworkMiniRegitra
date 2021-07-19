@@ -5,34 +5,50 @@ import objects.VehicleOwner;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class Company extends VehicleOwner {
     String title, companyID;
     double taxDeduction;
 
-    public Company(String companyID){
+    public Company(){
         super(VehicleOwner.TYPE_COMPANY);
-        this.companyID = companyID;
-//        fillData(companyID);
     }
 
-//    private void fillData(String companyID){
-//        try (BufferedReader br = new BufferedReader(new FileReader("src/data/users/" + companyID))) {
-//            String line;
-//            while ((line = br.readLine()) != null) {
-//                String[] data = line.split(",");
-//                switch (data[0]){
-//                    case "title" -> this.title = data[1];
-//                    case "owns" -> super.setVehicleList(data[1].split(";"));
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
+    @Override
+    public String getCompanyTitle() {
+        return title;
+    }
+
+    @Override
+    public String getCompanyID() {
+        return companyID;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCompanyID(String companyID) {
+        this.companyID = companyID;
+    }
 
     @Override
     public String[] getOwnerInfo(){
         return new String[]{title,companyID};
+    }
+
+
+    @Override
+    public void setInfo(HashMap<String,String> info){
+        info.forEach((key,stat) -> {
+            switch (key){
+                case ID -> super.setId(Integer.parseInt(stat));
+                case COMPANY_ID -> this.companyID = stat;
+                case COMPANY_TITLE -> this.title = stat;
+                case OWNED_VEHICLES_IDS -> super.setOwnedVehiclesIds(stat);
+            }
+        });
     }
 }

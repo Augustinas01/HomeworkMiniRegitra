@@ -234,7 +234,10 @@ public class DataManager {
                         owner = new Person();
                         owner.setInfo(userInfo);
                     }
-                    case VehicleOwner.TYPE_COMPANY -> owner = new Company(userInfo.get(VehicleOwner.COMPANY_ID));
+                    case VehicleOwner.TYPE_COMPANY -> {
+                        owner = new Company();
+                        owner.setInfo(userInfo);
+                    }
 //                    case VehicleOwner.TYPE_ADMIN -> owner = new Person(userInfo.get(VehicleOwner.FIRST_NAME));
                 }
                 //Adds user to database
@@ -320,7 +323,7 @@ public class DataManager {
         allUsersDB.put(user.getId(),user);
 
         String userInfo = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
-                user.getId(),user.getOwnerInfo()[0],user.getOwnerInfo()[1],user.getAge(),user.getCompanyTitle(),user.getCompanyId(),
+                user.getId(),user.getFirstName(),user.getLastName(),user.getAge(),user.getCompanyTitle(),user.getCompanyID(),
                 user.getCompanyTaxDeduction(), user.getOwnedIds(),user.getType());
         try( BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB, true))){
             buf.append(userInfo);
@@ -341,7 +344,16 @@ public class DataManager {
         user.setAge(Integer.parseInt(age));
 
         save(user);
+    }
 
+    public void register(String companyTitle, String companyID){
+
+        Company user = new Company();
+
+        user.setTitle(companyTitle);
+        user.setCompanyID(companyID);
+
+        save(user);
     }
 
     public boolean saveDB(){
@@ -351,14 +363,14 @@ public class DataManager {
                 return false;
             }
         }
+        initVehicleDB();
+        allVehiclesDB.forEach((vehicleID, vehicle) -> {
+            save(vehicle);
+        });
         if(usersDB.delete()) {
             initUsersDB();
-            initVehicleDB();
             allUsersDB.forEach((ownerID, owner) -> {
                 save(owner);
-            });
-            allVehiclesDB.forEach((vehicleID, vehicle) -> {
-                save(vehicle);
             });
             return true;
         }else {
