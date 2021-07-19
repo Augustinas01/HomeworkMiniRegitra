@@ -322,6 +322,8 @@ public class DataManager {
 
         allUsersDB.put(user.getId(),user);
 
+
+
         String userInfo = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
                 user.getId(),user.getFirstName(),user.getLastName(),user.getAge(),user.getCompanyTitle(),user.getCompanyID(),
                 user.getCompanyTaxDeduction(), user.getOwnedIds(),user.getType());
