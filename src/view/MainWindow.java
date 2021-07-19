@@ -18,6 +18,7 @@ public class MainWindow extends JFrame {
     private SearchPanel search;
     private LoginPanel login;
     private VehiclesPanel myVehicles;
+    private AboutPanel aboutPanel;
     ActionListener vehicleTypeRadio, vehicleMakerListListener, profileSelectorListener, buttonsListener, searchDBListener;
 
 
@@ -161,6 +162,10 @@ public class MainWindow extends JFrame {
         this.myVehicles = new VehiclesPanel(this.buttonsListener);
         this.myVehicles.setVisible(false);
 
+        this.aboutPanel = new AboutPanel(this.buttonsListener);
+        this.aboutPanel.setVisible(false);
+
+
         this.login = new LoginPanel(this.buttonsListener,
                                     this.profileSelectorListener);
         this.login.setVisible(false);
@@ -177,7 +182,7 @@ public class MainWindow extends JFrame {
             this.search.setVisible(false);
             this.remove(this.search);
         }
-        if(this.main.isVisible()) {
+        if (this.main.isVisible()) {
             this.main.setVisible(false);
             this.remove(this.main);
         }
@@ -199,7 +204,11 @@ public class MainWindow extends JFrame {
             this.search.setVisible(false);
             this.remove(this.search);
         }
-        if(this.login.isVisible()) {
+        if (this.aboutPanel.isVisible()){
+            this.aboutPanel.setVisible(false);
+            this.remove(this.aboutPanel);
+        }
+        if (this.login.isVisible()) {
             this.login.setVisible(false);
             this.remove(this.login);
         }
@@ -253,6 +262,16 @@ public class MainWindow extends JFrame {
         }
         this.add(BorderLayout.CENTER,this.myVehicles);
         this.myVehicles.setVisible(true);
+
+    }
+
+    public void showAboutPanel(){
+        if(this.main.isVisible()) {
+            this.main.setVisible(false);
+            this.remove(this.main);
+        }
+        this.add(BorderLayout.CENTER, aboutPanel);
+        this.aboutPanel.setVisible(true);
 
     }
 

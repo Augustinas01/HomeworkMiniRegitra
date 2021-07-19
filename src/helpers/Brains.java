@@ -82,6 +82,7 @@ public class Brains implements MainWindow.MainWindowListener {
             case Buttons.LOGIN             -> login();
             case Buttons.SIGN_UP           -> signUp();
             case Buttons.SEARCH_VEHICLE    -> showSearchPanel(true);
+            case Buttons.ABOUT             -> view.showAboutPanel();
             default                        -> System.out.println(e.getActionCommand());
         }
     }

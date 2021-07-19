@@ -32,6 +32,11 @@ public class MainMenuPanel extends JPanel {
         searchButton.setFocusable(false);
         searchButton.addActionListener(mainMenuListener);
 
+        JButton aboutButton = new JButton("About");
+        aboutButton.setActionCommand(Buttons.ABOUT);
+        aboutButton.setFocusable(false);
+        aboutButton.addActionListener(mainMenuListener);
+
         JButton logOutButton = new JButton("Log out");
         logOutButton.setActionCommand(Buttons.LOG_OUT);
         logOutButton.setFocusable(false);
@@ -41,6 +46,7 @@ public class MainMenuPanel extends JPanel {
         this.add(registerButton);
         this.add(myVehiclesButton);
         this.add(searchButton);
+        this.add(aboutButton);
         this.add(logOutButton);
     }
 
