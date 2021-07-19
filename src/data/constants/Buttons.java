@@ -16,4 +16,5 @@ public final class Buttons {
     public static final String CANCEL = "Cancel";
     public static final String CHANGE = "Change";
     public static final String SEARCH_VEHICLE = "Search Vehicle";
+    public static final String OK = "Ok";
 }

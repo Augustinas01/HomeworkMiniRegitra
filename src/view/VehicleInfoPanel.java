@@ -90,8 +90,7 @@ public class VehicleInfoPanel extends JPanel {
 //        changeButton.setActionCommand(Buttons.CHANGE);
 //        changeButton.addActionListener(buttonListener);
 
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand(Buttons.CANCEL);
+        JButton cancelButton = new JButton(Buttons.OK);
         cancelButton.addActionListener(buttonListener);
 
         //Adding Content

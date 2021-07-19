@@ -209,14 +209,18 @@ public class Brains implements MainWindow.MainWindowListener {
         System.out.println("give me info!");
     }
 
-    private void editDialogListener(ActionEvent e1,ActionEvent e){
+    private void editDialogListener(ActionEvent e1, ActionEvent e){
         switch (e1.getActionCommand()){
             case Buttons.CANCEL -> editDialog.dispose();
             case Buttons.CHANGE -> {
-                dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).setInfo(vehicleEditPanel.getDialogTFsStrings());
+                dataManager.getAllVehiclesDB()
+                        .get( Integer.parseInt(e.getActionCommand()) )
+                        .setInfo( vehicleEditPanel.getDialogTFsStrings() );
+
                 showMyVehiclesPanel();
                 editDialog.dispose();
             }
+            case Buttons.OK -> infoDialog.dispose();
         }
     }
     //endregion
