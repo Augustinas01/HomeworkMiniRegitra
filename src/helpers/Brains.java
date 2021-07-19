@@ -307,30 +307,6 @@ public class Brains implements MainWindow.MainWindowListener {
         }
         dataManager.register(title,view.getCompanyIdJTF().getText());
 
-//        String companyInfo = String.format("title,%s%n" +
-//                "no,%s%n" +
-//                "owns,%s%n",title,view.getCompanyIdJTF().getText(),null);
-
-//        File usersDB = new File("src/data/users");
-//        if (!usersDB.exists()) {
-//            try{
-//                usersDB.mkdirs();
-//                usersDB.createNewFile();
-//            }
-//            catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        try{
-//            BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB + "/" + view.getCompanyIdJTF().getText(), true));
-//
-//            buf.append(companyInfo);
-//
-//            buf.close();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//        }
         JOptionPane.showMessageDialog(view,"User created succesfully!");
     }
     //endregion

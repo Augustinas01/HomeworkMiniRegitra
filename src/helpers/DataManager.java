@@ -324,9 +324,9 @@ public class DataManager {
 
 
 
-        String userInfo = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
+        String userInfo = String.format("%s,%s,%s,%s,%s,%s,%s,%s%n",
                 user.getId(),user.getFirstName(),user.getLastName(),user.getAge(),user.getCompanyTitle(),user.getCompanyID(),
-                user.getCompanyTaxDeduction(), user.getOwnedIds(),user.getType());
+                user.getCompanyTaxDeduction(), user.getType());
         try( BufferedWriter buf = new BufferedWriter(new FileWriter(usersDB, true))){
             buf.append(userInfo);
         }
