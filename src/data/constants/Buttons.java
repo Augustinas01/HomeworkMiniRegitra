@@ -7,6 +7,7 @@ public final class Buttons {
     public static final String MY_VEHICLES = "My vehicles";
     public static final String SEARCH = "Search";
     public static final String ABOUT = "About";
+    public static final String INFO = "Info";
     public static final String LOG_OUT = "Log out";
     public static final String LOGIN = "Login";
     public static final String SIGN_UP = "Sign up";

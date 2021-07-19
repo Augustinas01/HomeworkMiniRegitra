@@ -11,15 +11,13 @@ import objects.vehicles.Car;
 import objects.vehicles.Motorcycle;
 import objects.vehicles.Supercar;
 import objects.vehicles.Truck;
-import view.MainWindow;
-import view.SearchPanel;
-import view.VehicleEditPanel;
-import view.VehiclesPanel;
+import view.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
 import java.util.*;
@@ -38,8 +36,9 @@ public class Brains implements MainWindow.MainWindowListener {
     private JPanel vehiclesGrid;
 
     private VehicleEditPanel vehicleEditPanel;
+    private VehicleInfoPanel vehicleInfoPanel;
 
-    private JDialog editDialog;
+    private JDialog editDialog, infoDialog;
 
     private DataManager dataManager;
 
@@ -195,6 +194,19 @@ public class Brains implements MainWindow.MainWindowListener {
         editDialog.pack();
         editDialog.setLocationRelativeTo(view);
         editDialog.setVisible(true);
+    }
+
+    private void infoButtonListener(ActionEvent e){
+        infoDialog = new JDialog();
+        LinkedHashMap<String, Object> vehicleInfo = dataManager.getAllVehiclesDB().get(Integer.parseInt(e.getActionCommand())).getInfo();
+        vehicleInfoPanel = new VehicleInfoPanel(vehicleInfo,e1 -> editDialogListener(e1,e));
+        infoDialog.setTitle("Info about - " + vehicleInfo.get(Vehicle.NUMBER_PLATE));
+        infoDialog.setLayout(new FlowLayout());
+        infoDialog.add(vehicleInfoPanel);
+        infoDialog.pack();
+        infoDialog.setLocationRelativeTo(view);
+        infoDialog.setVisible(true);
+        System.out.println("give me info!");
     }
 
     private void editDialogListener(ActionEvent e1,ActionEvent e){
@@ -432,13 +444,16 @@ public class Brains implements MainWindow.MainWindowListener {
 
                 vehicleInfo.forEach((info, stat) -> {
                     switch (info) {
-                        case Vehicle.BRAND, Vehicle.MODEL, Vehicle.NUMBER_PLATE, Vehicle.PRICE, Vehicle.TYPE, Vehicle.OWNER -> {
+                        case Vehicle.BRAND, Vehicle.MODEL, Vehicle.NUMBER_PLATE, Vehicle.TYPE, Vehicle.OWNER -> {
                             JLabel cell = new JLabel(stat.toString());
                             cell.setHorizontalAlignment(SwingConstants.CENTER);
                             cell.setBorder(new LineBorder(Color.BLACK));
                             vehiclesGrid.add(cell);
                         }
-                        case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(stat.toString()));
+                        case Vehicle.ID -> {
+                            vehiclesGrid.add(vehicleGridEdit(stat.toString()));
+                            vehiclesGrid.add(vehicleGridInfo(stat.toString()));
+                        }
                     }
                 });
 
@@ -488,14 +503,17 @@ public class Brains implements MainWindow.MainWindowListener {
 
                 vehicleInfo.forEach((info, stat) -> {
                     switch (info) {
-                        case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.SEATS, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
+                        case Vehicle.BRAND, Vehicle.MODEL, Vehicle.HORSE_POWER, Vehicle.NUMBER_PLATE, Vehicle.PRICE -> {
                             JLabel cell = new JLabel(stat.toString());
                             cell.setHorizontalAlignment(SwingConstants.CENTER);
                             cell.setBorder(new LineBorder(Color.BLACK));
                             vehiclesGrid.add(cell);
 
                         }
-                        case Vehicle.ID -> vehiclesGrid.add(vehicleGridEdit(String.valueOf(stat)));
+                        case Vehicle.ID -> {
+                            vehiclesGrid.add(vehicleGridEdit(String.valueOf(stat)));
+                            vehiclesGrid.add(vehicleGridInfo(String.valueOf(stat)));
+                        }
 
                     }
                 });
@@ -505,13 +523,12 @@ public class Brains implements MainWindow.MainWindowListener {
             vehiclesGridBody.add(new JLabel("You have no vehicles ;("));
         }
 
-
         view.getMyVehiclesBody().add(vehiclesGridBody);
         view.showMyVehiclesPanel();
     }
 
     private JPanel vehicleGridEdit(String id){
-        JPanel editCell = new JPanel(new GridLayout(1,2));
+        JPanel editCell = new JPanel(new GridLayout(1,3));
         JButton delButton = new JButton(Buttons.DEL);
         JButton editButton = new JButton(Buttons.EDIT);
 
@@ -521,10 +538,25 @@ public class Brains implements MainWindow.MainWindowListener {
         editButton.setActionCommand(id);
         editButton.addActionListener(e -> editButtonListener(e));
 
+
         editCell.add(delButton);
         editCell.add(editButton);
+
         return editCell;
     }
+    private JPanel vehicleGridInfo(String id){
+        JPanel editCell = new JPanel(new GridLayout(1,1));
+        JButton infoButton = new JButton(Buttons.INFO);
+
+
+
+        infoButton.setActionCommand(id);
+        infoButton.addActionListener(e -> infoButtonListener(e));
+
+        editCell.add(infoButton);
+        return editCell;
+    }
+
 
     private void logOut(){
         if(dataManager.saveDB()){

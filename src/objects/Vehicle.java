@@ -37,13 +37,18 @@ public class Vehicle {
     int id,horsePower,seats,ownerId;
     String brand,model,numberPlate,type,ownerType;
     LocalDate firstRegistrationDate;
-    BigDecimal price,taxRate;
+    BigDecimal price, taxRate;
     VehicleOwner owner;
 
     public Vehicle(VehicleOwner vehicleOwner, String type){
         this.owner = vehicleOwner;
         this.type = type;
         this.id = Integer.MIN_VALUE;
+        switch (type){
+            case TYPE_CAR, TYPE_SUPERCAR -> this.taxRate = BigDecimal.valueOf(1);
+            case TYPE_MOTORCYCLE -> this.taxRate = BigDecimal.valueOf(0.5);
+            case TYPE_TRUCK -> this.taxRate = BigDecimal.valueOf(1.5);
+        }
     }
 
     //region Getters
@@ -77,9 +82,6 @@ public class Vehicle {
         return price;
     }
 
-    public BigDecimal getTaxRate() {
-        return taxRate;
-    }
 
     public VehicleOwner getOwner() {
         return owner;
@@ -111,6 +113,7 @@ public class Vehicle {
         info.put(ID, id);
         info.put(REGISTRATION_DATE, firstRegistrationDate);
         info.put(VehicleOwner.ID,String.valueOf(this.owner.getId()));
+        info.put(TAX_RATE,calculateTax());
         return info;
     }
     //endregion
@@ -140,8 +143,11 @@ public class Vehicle {
 
     }
 
-    public void calculateTax(){
-
+    public BigDecimal calculateTax(){
+        if(type.equals(TYPE_SUPERCAR)){
+            return taxRate.multiply(price.multiply(new BigDecimal(4))).add((new BigDecimal(seats * 500)));
+        }
+        return taxRate.multiply(price).add((new BigDecimal(seats * 500)));
     }
 
 
