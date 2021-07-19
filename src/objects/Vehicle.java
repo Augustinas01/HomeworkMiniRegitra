@@ -31,7 +31,7 @@ public class Vehicle {
     public static final String PRICE = "price";
 
 
-    int id,horsePower,seats;
+    int id,horsePower,seats,ownerId;
     String brand,model,numberPlate,type,ownerType;
     LocalDate firstRegistrationDate;
     BigDecimal price,taxRate;
@@ -107,7 +107,7 @@ public class Vehicle {
 
         info.put(ID, id);
         info.put(REGISTRATION_DATE, firstRegistrationDate);
-        info.put(VehicleOwner.ID,this.owner.getId());
+        info.put(VehicleOwner.ID,String.valueOf(this.owner.getId()));
         return info;
     }
     //endregion

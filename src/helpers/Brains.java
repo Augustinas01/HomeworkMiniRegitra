@@ -508,9 +508,9 @@ public class Brains implements MainWindow.MainWindowListener {
             vehiclesGrid.add(cell);
         }
 
-        HashMap<Integer,Vehicle> vehicles = dataManager.getSearchResults(loggedUser.getOwnerInfo()[0] + " " + loggedUser.getOwnerInfo()[1],
+        HashMap<Integer,Vehicle> vehicles = dataManager.getSearchResults(String.valueOf(loggedUser.getId()),
                 SearchOptions.DB_ALL_VEHICLES,
-                SearchOptions.BY_OWNER);
+                SearchOptions.BY_OWNER_ID);
 
 
 
